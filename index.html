@@ -1,0 +1,2422 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>看不見的地下，我們怎麼知道？——校園折射震測科學建模與第4炮實測分析</title>
+  <meta name="description" content="台北市立大學地球物理通論課程（202610_UTELS）校園折射震測科學探究報告與第4炮（104炮點）實測資料互動分析平台。包含互動式t-x走時曲線、兩層地下速度結構反演模擬器、訊號衰減與真實資料限制探討。">
+  <meta name="keywords" content="折射震測, 地球物理, 走時曲線, 司乃耳定律, 臨界折射, 截距時間法, 兩層模型, 雷利表面波, 北市大">
+  <meta name="author" content="台北市立大學 地球物理通論課程">
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="看不見的地下，我們怎麼知道？——校園折射震測科學建模">
+  <meta property="og:description" content="互動式折射震測資料分析與兩層地下波傳模擬器，含第4炮實測數據與CER科學論證。">
+  <meta property="og:type" content="website">
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&family=Noto+Sans+TC:wght@300;400;500;700;900&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- KaTeX for Math Equations -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/contrib/auto-render.min.js"
+    onload="renderMathInElement(document.body, {delimiters: [{left: '$$', right: '$$', display: true}, {left: '$', right: '$', display: false}]});"></script>
+
+  <!-- Chart.js for Interactive Charts -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js"></script>
+
+  <style>
+    :root {
+      --bg-primary: #0b1120;
+      --bg-secondary: #0f172a;
+      --bg-card: #1e293b;
+      --bg-card-hover: #24344d;
+      --bg-glass: rgba(30, 41, 59, 0.78);
+      --border-color: #334155;
+      --border-focus: #38bdf8;
+      
+      --text-primary: #f8fafc;
+      --text-secondary: #94a3b8;
+      --text-muted: #64748b;
+      
+      --accent-cyan: #38bdf8;
+      --accent-blue: #3b82f6;
+      --accent-indigo: #6366f1;
+      --accent-amber: #f59e0b;
+      --accent-emerald: #10b981;
+      --accent-rose: #f43f5e;
+      --accent-purple: #a855f7;
+
+      --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -2px rgba(0, 0, 0, 0.3);
+      --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.4), 0 4px 6px -4px rgba(0, 0, 0, 0.4);
+      --shadow-glow: 0 0 25px -5px rgba(56, 189, 248, 0.25);
+      
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --radius-lg: 18px;
+      --radius-full: 9999px;
+      
+      --transition-fast: 0.15s ease;
+      --transition-normal: 0.25s ease;
+    }
+
+    [data-theme="light"] {
+      --bg-primary: #f8fafc;
+      --bg-secondary: #f1f5f9;
+      --bg-card: #ffffff;
+      --bg-card-hover: #f8fafc;
+      --bg-glass: rgba(255, 255, 255, 0.85);
+      --border-color: #e2e8f0;
+      --border-focus: #0284c7;
+      
+      --text-primary: #0f172a;
+      --text-secondary: #475569;
+      --text-muted: #94a3b8;
+      
+      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.08);
+      --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+      --shadow-glow: 0 0 25px -5px rgba(14, 165, 233, 0.15);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+      font-size: 16px;
+    }
+
+    body {
+      font-family: 'Inter', 'Noto Sans TC', system-ui, -apple-system, sans-serif;
+      background-color: var(--bg-primary);
+      color: var(--text-primary);
+      line-height: 1.65;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+      transition: background-color var(--transition-normal), color var(--transition-normal);
+    }
+
+    code, pre, .font-mono {
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    /* Container */
+    .container {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 0 1.5rem;
+      width: 100%;
+    }
+
+    /* Navbar */
+    .navbar {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: var(--bg-glass);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border-color);
+      transition: all var(--transition-normal);
+    }
+
+    .navbar-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 70px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      text-decoration: none;
+      color: var(--text-primary);
+      font-weight: 800;
+      font-size: 1.15rem;
+      letter-spacing: -0.02em;
+    }
+
+    .brand-badge {
+      background: linear-gradient(135deg, var(--accent-cyan), var(--accent-blue));
+      color: #0b1120;
+      font-size: 0.72rem;
+      font-weight: 800;
+      padding: 0.25rem 0.6rem;
+      border-radius: var(--radius-sm);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 1.25rem;
+      list-style: none;
+    }
+
+    .nav-link {
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-size: 0.9rem;
+      font-weight: 500;
+      transition: color var(--transition-fast);
+      padding: 0.4rem 0.6rem;
+      border-radius: var(--radius-sm);
+    }
+
+    .nav-link:hover {
+      color: var(--accent-cyan);
+    }
+
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .btn-icon {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      color: var(--text-secondary);
+      width: 40px;
+      height: 40px;
+      border-radius: var(--radius-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all var(--transition-fast);
+    }
+
+    .btn-icon:hover {
+      color: var(--accent-cyan);
+      border-color: var(--border-focus);
+      transform: translateY(-1px);
+    }
+
+    /* Hero Section */
+    .hero {
+      padding: 4.5rem 0 3.5rem;
+      position: relative;
+      background: radial-gradient(circle at 50% -20%, rgba(56, 189, 248, 0.12), transparent 70%);
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .hero-badge-wrap {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.6rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-size: 0.8rem;
+      font-weight: 600;
+      padding: 0.3rem 0.75rem;
+      border-radius: var(--radius-full);
+      background: rgba(56, 189, 248, 0.1);
+      color: var(--accent-cyan);
+      border: 1px solid rgba(56, 189, 248, 0.2);
+    }
+
+    .tag-emerald {
+      background: rgba(16, 185, 129, 0.1);
+      color: var(--accent-emerald);
+      border-color: rgba(16, 185, 129, 0.2);
+    }
+
+    .tag-amber {
+      background: rgba(245, 158, 11, 0.1);
+      color: var(--accent-amber);
+      border-color: rgba(245, 158, 11, 0.2);
+    }
+
+    .tag-purple {
+      background: rgba(168, 85, 247, 0.1);
+      color: var(--accent-purple);
+      border-color: rgba(168, 85, 247, 0.2);
+    }
+
+    .hero-title {
+      font-size: 2.75rem;
+      line-height: 1.2;
+      font-weight: 900;
+      letter-spacing: -0.03em;
+      margin-bottom: 1.25rem;
+      background: linear-gradient(135deg, #ffffff 30%, var(--accent-cyan) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    [data-theme="light"] .hero-title {
+      background: linear-gradient(135deg, #0f172a 30%, #0284c7 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .hero-subtitle {
+      font-size: 1.15rem;
+      color: var(--text-secondary);
+      max-width: 860px;
+      margin-bottom: 2rem;
+      line-height: 1.7;
+    }
+
+    .hero-meta-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+      margin-top: 2rem;
+    }
+
+    .meta-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 1rem 1.25rem;
+      transition: transform var(--transition-fast), border-color var(--transition-fast);
+    }
+
+    .meta-card:hover {
+      border-color: var(--accent-cyan);
+      transform: translateY(-2px);
+    }
+
+    .meta-label {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      font-weight: 600;
+      margin-bottom: 0.25rem;
+    }
+
+    .meta-value {
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+
+    .meta-sub {
+      font-size: 0.78rem;
+      color: var(--accent-cyan);
+      margin-top: 0.2rem;
+    }
+
+    /* Section Styles */
+    .section {
+      padding: 4.5rem 0;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .section-header {
+      margin-bottom: 2.75rem;
+    }
+
+    .section-header.text-center {
+      text-align: center;
+    }
+
+    .section-kicker {
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: var(--accent-cyan);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-bottom: 0.5rem;
+    }
+
+    .section-title {
+      font-size: 2rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      margin-bottom: 0.75rem;
+    }
+
+    .section-desc {
+      font-size: 1.05rem;
+      color: var(--text-secondary);
+      max-width: 800px;
+    }
+
+    .section-header.text-center .section-desc {
+      margin: 0 auto;
+    }
+
+    /* Card & Grid */
+    .grid-2 {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .grid-4 {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1.25rem;
+    }
+
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      padding: 1.75rem;
+      box-shadow: var(--shadow-md);
+      position: relative;
+      transition: all var(--transition-normal);
+    }
+
+    .card:hover {
+      box-shadow: var(--shadow-lg);
+      border-color: var(--border-focus);
+    }
+
+    .card-title {
+      font-size: 1.25rem;
+      font-weight: 700;
+      margin-bottom: 0.75rem;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+
+    .card-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: var(--radius-md);
+      background: rgba(56, 189, 248, 0.15);
+      color: var(--accent-cyan);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.1rem;
+      flex-shrink: 0;
+    }
+
+    /* CER Box */
+    .cer-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.5rem;
+      margin-top: 1.5rem;
+    }
+
+    @media (max-width: 900px) {
+      .cer-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .cer-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      padding: 1.75rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .cer-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+    }
+
+    .cer-claim::before { background: var(--accent-cyan); }
+    .cer-evidence::before { background: var(--accent-amber); }
+    .cer-reasoning::before { background: var(--accent-emerald); }
+
+    .cer-badge {
+      display: inline-block;
+      font-size: 0.75rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      padding: 0.25rem 0.6rem;
+      border-radius: var(--radius-sm);
+      margin-bottom: 0.75rem;
+    }
+
+    .cer-claim .cer-badge { background: rgba(56, 189, 248, 0.15); color: var(--accent-cyan); }
+    .cer-evidence .cer-badge { background: rgba(245, 158, 11, 0.15); color: var(--accent-amber); }
+    .cer-reasoning .cer-badge { background: rgba(16, 185, 129, 0.15); color: var(--accent-emerald); }
+
+    /* Interactive Simulation Canvas Box */
+    .sim-wrapper {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      padding: 1.5rem;
+      margin-top: 1.5rem;
+      box-shadow: var(--shadow-lg);
+    }
+
+    .sim-toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      margin-bottom: 1.25rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .sim-controls {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1.25rem;
+      margin-top: 1.25rem;
+      padding-top: 1.25rem;
+      border-top: 1px solid var(--border-color);
+    }
+
+    .control-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+    }
+
+    .control-label {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .control-val {
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--accent-cyan);
+      font-weight: 700;
+    }
+
+    input[type="range"] {
+      width: 100%;
+      height: 6px;
+      border-radius: var(--radius-full);
+      background: var(--border-color);
+      outline: none;
+      -webkit-appearance: none;
+    }
+
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: var(--accent-cyan);
+      cursor: pointer;
+      box-shadow: 0 0 10px rgba(56, 189, 248, 0.5);
+      transition: transform var(--transition-fast);
+    }
+
+    input[type="range"]::-webkit-slider-thumb:hover {
+      transform: scale(1.15);
+    }
+
+    .canvas-container {
+      width: 100%;
+      background: #070d17;
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      border: 1px solid var(--border-color);
+      position: relative;
+    }
+
+    canvas#rayCanvas {
+      display: block;
+      width: 100%;
+      height: 380px;
+    }
+
+    .sim-stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 1rem;
+      margin-top: 1.25rem;
+    }
+
+    .stat-pill {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 0.75rem 1rem;
+      text-align: center;
+    }
+
+    .stat-pill-label {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+    }
+
+    .stat-pill-val {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-top: 0.2rem;
+    }
+
+    /* Chart Box */
+    .chart-container-box {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      padding: 1.5rem;
+      box-shadow: var(--shadow-md);
+      margin-top: 1.5rem;
+    }
+
+    .chart-wrapper {
+      position: relative;
+      height: 440px;
+      width: 100%;
+    }
+
+    .chart-legend-custom {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      margin-top: 1rem;
+      padding-top: 1rem;
+      border-top: 1px solid var(--border-color);
+      font-size: 0.85rem;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: var(--text-secondary);
+      cursor: pointer;
+    }
+
+    .legend-indicator {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+    }
+
+    /* Buttons */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      padding: 0.65rem 1.25rem;
+      border-radius: var(--radius-md);
+      font-size: 0.9rem;
+      font-weight: 600;
+      text-decoration: none;
+      cursor: pointer;
+      border: 1px solid transparent;
+      transition: all var(--transition-fast);
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--accent-cyan), var(--accent-blue));
+      color: #0b1120;
+      font-weight: 700;
+    }
+
+    .btn-primary:hover {
+      box-shadow: var(--shadow-glow);
+      transform: translateY(-1px);
+    }
+
+    .btn-secondary {
+      background: var(--bg-card);
+      border-color: var(--border-color);
+      color: var(--text-primary);
+    }
+
+    .btn-secondary:hover {
+      background: var(--bg-card-hover);
+      border-color: var(--accent-cyan);
+    }
+
+    .btn-sm {
+      padding: 0.4rem 0.8rem;
+      font-size: 0.8rem;
+    }
+
+    .btn-active {
+      background: rgba(56, 189, 248, 0.2);
+      border-color: var(--accent-cyan);
+      color: var(--accent-cyan);
+    }
+
+    /* Table Styles */
+    .table-container {
+      overflow-x: auto;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      margin-top: 1.25rem;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: 0.88rem;
+    }
+
+    th {
+      background: var(--bg-secondary);
+      padding: 0.85rem 1rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      font-size: 0.75rem;
+      letter-spacing: 0.05em;
+      border-bottom: 1px solid var(--border-color);
+      white-space: nowrap;
+    }
+
+    td {
+      padding: 0.75rem 1rem;
+      border-bottom: 1px solid var(--border-color);
+      color: var(--text-secondary);
+      white-space: nowrap;
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    tr:hover td {
+      background: rgba(56, 189, 248, 0.04);
+      color: var(--text-primary);
+    }
+
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 0.2rem 0.55rem;
+      border-radius: var(--radius-sm);
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+
+    .status-high { background: rgba(16, 185, 129, 0.15); color: var(--accent-emerald); }
+    .status-med { background: rgba(56, 189, 248, 0.15); color: var(--accent-cyan); }
+    .status-low { background: rgba(245, 158, 11, 0.15); color: var(--accent-amber); }
+    .status-bad { background: rgba(244, 63, 94, 0.15); color: var(--accent-rose); }
+
+    /* Callout & Tabs */
+    .callout {
+      background: rgba(56, 189, 248, 0.08);
+      border-left: 4px solid var(--accent-cyan);
+      padding: 1.25rem 1.5rem;
+      border-radius: 0 var(--radius-md) var(--radius-md) 0;
+      margin: 1.5rem 0;
+    }
+
+    .callout-warning {
+      background: rgba(245, 158, 11, 0.08);
+      border-left-color: var(--accent-amber);
+    }
+
+    .callout-danger {
+      background: rgba(244, 63, 94, 0.08);
+      border-left-color: var(--accent-rose);
+    }
+
+    .callout-title {
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 0.35rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .callout p {
+      color: var(--text-secondary);
+      font-size: 0.92rem;
+      margin: 0;
+    }
+
+    /* Tabs */
+    .tabs-header {
+      display: flex;
+      gap: 0.5rem;
+      border-bottom: 1px solid var(--border-color);
+      margin-bottom: 1.5rem;
+      overflow-x: auto;
+    }
+
+    .tab-btn {
+      padding: 0.75rem 1.25rem;
+      background: none;
+      border: none;
+      color: var(--text-secondary);
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+      position: relative;
+      white-space: nowrap;
+      transition: color var(--transition-fast);
+    }
+
+    .tab-btn:hover {
+      color: var(--text-primary);
+    }
+
+    .tab-btn.active {
+      color: var(--accent-cyan);
+    }
+
+    .tab-btn.active::after {
+      content: '';
+      position: absolute;
+      bottom: -1px;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: var(--accent-cyan);
+    }
+
+    .tab-pane {
+      display: none;
+    }
+
+    .tab-pane.active {
+      display: block;
+      animation: fadeIn 0.3s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Footer */
+    footer {
+      background: var(--bg-secondary);
+      border-top: 1px solid var(--border-color);
+      padding: 3.5rem 0 2.5rem;
+      margin-top: auto;
+    }
+
+    .footer-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr;
+      gap: 2.5rem;
+      margin-bottom: 2.5rem;
+    }
+
+    @media (max-width: 768px) {
+      .footer-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .footer-brand {
+      font-size: 1.1rem;
+      font-weight: 700;
+      margin-bottom: 0.75rem;
+      color: var(--text-primary);
+    }
+
+    .footer-desc {
+      color: var(--text-secondary);
+      font-size: 0.88rem;
+      line-height: 1.6;
+    }
+
+    .footer-title {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 1rem;
+    }
+
+    .footer-links {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .footer-links a {
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-size: 0.88rem;
+      transition: color var(--transition-fast);
+    }
+
+    .footer-links a:hover {
+      color: var(--accent-cyan);
+    }
+
+    .footer-bottom {
+      border-top: 1px solid var(--border-color);
+      padding-top: 1.5rem;
+      text-align: center;
+      font-size: 0.82rem;
+      color: var(--text-muted);
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 900px) {
+      .hero-title {
+        font-size: 2.1rem;
+      }
+      .nav-links {
+        display: none;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navigation Bar -->
+  <nav class="navbar">
+    <div class="container navbar-inner">
+      <a href="#" class="brand">
+        <span class="brand-badge">UTELS 2026</span>
+        <span>折射震測科學建模</span>
+      </a>
+      
+      <ul class="nav-links">
+        <li><a href="#equipment" class="nav-link">儀器系統</a></li>
+        <li><a href="#principles" class="nav-link">波動物理</a></li>
+        <li><a href="#travel-time" class="nav-link">走時曲線圖</a></li>
+        <li><a href="#simulator" class="nav-link">波傳模擬器</a></li>
+        <li><a href="#signal-quality" class="nav-link">訊噪與飽和</a></li>
+        <li><a href="#cer-framework" class="nav-link">CER論證</a></li>
+        <li><a href="#data-table" class="nav-link">原始數據庫</a></li>
+        <li><a href="#deployment" class="nav-link">部署指南</a></li>
+      </ul>
+
+      <div class="nav-actions">
+        <button id="themeToggle" class="btn-icon" title="切換深色/淺色主題" aria-label="切換深色/淺色主題">
+          <svg id="themeIcon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="5"></circle>
+            <line x1="12" y1="1" x2="12" y2="3"></line>
+            <line x1="12" y1="21" x2="12" y2="23"></line>
+            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+            <line x1="1" y1="12" x2="3" y2="12"></line>
+            <line x1="21" y1="12" x2="23" y2="12"></line>
+            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+          </svg>
+        </button>
+        <a href="#simulator" class="btn btn-primary btn-sm">互動模擬</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <header class="hero">
+    <div class="container">
+      <div class="hero-badge-wrap">
+        <span class="tag">台北市立大學 地球物理通論課程</span>
+        <span class="tag tag-emerald">測線代號：202610_UTELS</span>
+        <span class="tag tag-amber">施測日期：2026-10-07</span>
+        <span class="tag tag-purple">第 4 炮（104 炮點）實測分析</span>
+      </div>
+
+      <h1 class="hero-title">看不見的地下，我們怎麼知道？<br>校園折射震測科學建模與實測分析</h1>
+      
+      <p class="hero-subtitle">
+        透過人工震源（鐵鎚敲擊鐵板）激發彈性波，由 24 支動圈受波器陣列量測微秒等級走時，探究北市大圖書館後方地表風化層與深部高速層的兩層速度構造模型。
+      </p>
+
+      <div class="hero-meta-grid">
+        <div class="meta-card">
+          <div class="meta-label">受波器陣列配置</div>
+          <div class="meta-value">24 Channels</div>
+          <div class="meta-sub">間距 2.0 m ‧ 展距 0 ～ 46 m</div>
+        </div>
+        <div class="meta-card">
+          <div class="meta-label">第 4 炮實際震源位置</div>
+          <div class="meta-value">12.0 m</div>
+          <div class="meta-sub">左翼 7 道 (0~12m) ‧ 右翼 17 道 (0~34m)</div>
+        </div>
+        <div class="meta-card">
+          <div class="meta-label">高精確採樣規格</div>
+          <div class="meta-value">0.25 ms</div>
+          <div class="meta-sub">4000 Hz 取樣率 ‧ 2000 樣本 / 道 (500 ms)</div>
+        </div>
+        <div class="meta-card">
+          <div class="meta-label">兩層反演估計厚度</div>
+          <div class="meta-value">h ≈ 2.5 ～ 2.8 m</div>
+          <div class="meta-sub">折射視速度 V2 ≈ 550 m/s</div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <!-- Section 1: 儀器與野外設備系統 -->
+    <section id="equipment" class="section">
+      <div class="container">
+        <div class="section-header">
+          <div class="section-kicker">PART 1: Field Instrument System</div>
+          <h2 class="section-title">野外儀器與硬體觀測系統</h2>
+          <p class="section-desc">
+            折射震測並非單純的敲擊，而是一套由震源、微電壓感測、奈秒至毫秒級同步時鐘與專用記錄儀構成的精密科學系統。
+          </p>
+        </div>
+
+        <div class="grid-3">
+          <!-- Card 1 -->
+          <div class="card">
+            <div class="card-title">
+              <span class="card-icon">1</span>
+              Geometrics DAS-1 NZ 震測儀
+            </div>
+            <p style="color: var(--text-secondary); font-size: 0.92rem; margin-bottom: 0.75rem;">
+              專業 24 通道資料擷取主機（Data Acquisition System），負責將受波器感應的微伏至毫伏類比電壓同步執行 A/D 數位轉換。
+            </p>
+            <ul style="color: var(--text-muted); font-size: 0.85rem; padding-left: 1.25rem; line-height: 1.6;">
+              <li><strong>採樣間隔：</strong>0.25 ms（4000 Hz 取樣率）</li>
+              <li><strong>記錄長度：</strong>0.500 秒（每道 2000 個取樣點）</li>
+              <li><strong>濾波模式：</strong>全頻段原始無失真記錄（Low/High/Notch 關閉）</li>
+              <li><strong>固定增益：</strong>36 dB，資料轉換因子 4.2704×10⁻⁵ V/count</li>
+            </ul>
+          </div>
+
+          <!-- Card 2 -->
+          <div class="card">
+            <div class="card-title">
+              <span class="card-icon">2</span>
+              人工震源與觸發系統
+            </div>
+            <p style="color: var(--text-secondary); font-size: 0.92rem; margin-bottom: 0.75rem;">
+              由大鐵鎚、高強度鋼製敲擊底板與慣性 Trigger 感測開關組成。
+            </p>
+            <ul style="color: var(--text-muted); font-size: 0.85rem; padding-left: 1.25rem; line-height: 1.6;">
+              <li><strong>鐵板功能：</strong>保護草皮並提供剛性耦合介面，確保敲擊能量波形與主頻高度一致。</li>
+              <li><strong>Trigger 觸發：</strong>敲擊瞬間開關閉合，回傳脈衝作為 $t=0$ 走時絕對零點。</li>
+              <li><strong>垂直疊加 (Stack)：</strong>重複敲擊 15 次，抵消隨機環境噪訊，提升訊噪比（SNR）。</li>
+            </ul>
+          </div>
+
+          <!-- Card 3 -->
+          <div class="card">
+            <div class="card-title">
+              <span class="card-icon">3</span>
+              24 支動圈式垂直受波器
+            </div>
+            <p style="color: var(--text-secondary); font-size: 0.92rem; margin-bottom: 0.75rem;">
+              垂直分量動圈檢波器（Geophones），利用電磁感應原理量測地面垂直微振動。
+            </p>
+            <ul style="color: var(--text-muted); font-size: 0.85rem; padding-left: 1.25rem; line-height: 1.6;">
+              <li><strong>幾何布設：</strong>固定間距 2.0 m，測線總長 46.0 m（G1~G24）。</li>
+              <li><strong>地表耦合：</strong>高剛性金屬探針深插地面，消除空隙諧波。</li>
+              <li><strong>物理轉換：</strong>懸掛線圈慣性靜止，外殼磁鐵振動，輸出電壓正比於地表振速。</li>
+            </ul>
+          </div>
+
+          <!-- Card 4 -->
+          <div class="card">
+            <div class="card-title">
+              <span class="card-icon">4</span>
+              測線多芯電纜 (Spread Cable)
+            </div>
+            <p style="color: var(--text-secondary); font-size: 0.92rem;">
+              沿測線鋪設之遮蔽訊號纜線，配置 24 組間距 2m 之防水分接頭（Takeouts），嚴格維持物理通道與空間幾何座標之一一對應（Data Provenance）。
+            </p>
+          </div>
+
+          <!-- Card 5 -->
+          <div class="card">
+            <div class="card-title">
+              <span class="card-icon">5</span>
+              皮尺空間測量基準
+            </div>
+            <p style="color: var(--text-secondary); font-size: 0.92rem;">
+              沿測線展開 46 m 長捲尺，精確標定 24 個受波器位置（0, 2, ..., 46m）及 12 處震源敲擊點（0, 4, ..., 44m），為地下建模提供不可或缺的距離基準 $x$。
+            </p>
+          </div>
+
+          <!-- Card 6 -->
+          <div class="card">
+            <div class="card-title">
+              <span class="card-icon">6</span>
+              控制筆電與 12V 直流純淨電源
+            </div>
+            <p style="color: var(--text-secondary); font-size: 0.92rem;">
+              現場即時波形監控，封裝 SEG-2 / SEG-Y 格式。野外採用車用 12V 鉛酸電池供電，從源頭杜絕市電 60 Hz 諧波與發電機電壓波動之干擾。
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 2: 物理原理與建模方法 -->
+    <section id="principles" class="section" style="background: var(--bg-secondary);">
+      <div class="container">
+        <div class="section-header">
+          <div class="section-kicker">PART 2: Physics & Scientific Modeling</div>
+          <h2 class="section-title">波動物理原理與折射震測機制</h2>
+          <p class="section-desc">
+            看不見的地下如何透視？透過彈性波傳播速度對地層力學性質（密度、剪切模數、孔隙率）的敏感性，建立地下速度分層模型。
+          </p>
+        </div>
+
+        <div class="grid-2">
+          <!-- Physics block 1 -->
+          <div class="card">
+            <h3 class="card-title">
+              <span class="card-icon">⚡</span>
+              司乃耳定律與臨界折射（Critical Refraction）
+            </h3>
+            <p style="color: var(--text-secondary); margin-bottom: 1rem;">
+              當表層疏鬆風化土（低波速 $V_1$）下方存在堅硬基岩或壓密沉積層（高波速 $V_2$ 且 $V_2 > V_1$）時，波自低速介質入射高速介質將向法線外側偏折：
+            </p>
+            <div style="background: var(--bg-secondary); padding: 1rem; border-radius: var(--radius-md); text-align: center; margin-bottom: 1rem;">
+              $$\frac{\sin\theta_1}{V_1} = \frac{\sin\theta_2}{V_2}$$
+            </div>
+            <p style="color: var(--text-secondary);">
+              當折射角 $\theta_2 = 90^\circ$ 時，入射角達到<strong>臨界角（$\theta_c$）</strong>：
+            </p>
+            <div style="background: var(--bg-secondary); padding: 0.75rem; border-radius: var(--radius-md); text-align: center; margin: 0.75rem 0;">
+              $$\sin\theta_c = \frac{V_1}{V_2}$$
+            </div>
+            <p style="color: var(--text-muted); font-size: 0.88rem;">
+              此時彈性波將沿兩層介質交界頂部以高速 $V_2$ 滑行，形成<strong>頭波（Head Wave / 薄層折射波）</strong>，並不斷以臨界角 $\theta_c$ 向地表輻射回到受波器陣列。
+            </p>
+          </div>
+
+          <!-- Physics block 2 -->
+          <div class="card">
+            <h3 class="card-title">
+              <span class="card-icon">🏁</span>
+              初達波競爭：「走得最短，不一定最早到」
+            </h3>
+            <p style="color: var(--text-secondary); margin-bottom: 1rem;">
+              受波器記錄到的<strong>初達波（First Arrival）</strong>在不同支距（Offset $x$）呈現兩段競爭行為：
+            </p>
+            
+            <div style="margin-bottom: 0.75rem;">
+              <strong style="color: var(--accent-cyan);">1. 直達波 (Direct Wave, $x < x_{\text{cross}}$)：</strong>
+              <div style="background: var(--bg-secondary); padding: 0.6rem; border-radius: var(--radius-sm); margin: 0.4rem 0;">
+                $$t_{\text{direct}} = \frac{x}{V_1} \quad \implies \text{斜率 } m_1 = \frac{1}{V_1}$$
+              </div>
+            </div>
+
+            <div>
+              <strong style="color: var(--accent-amber);">2. 折射波 (Refracted Wave, $x > x_{\text{cross}}$)：</strong>
+              <div style="background: var(--bg-secondary); padding: 0.6rem; border-radius: var(--radius-sm); margin: 0.4rem 0;">
+                $$t_{\text{refracted}} = \frac{x}{V_2} + t_i \quad \implies \text{斜率 } m_2 = \frac{1}{V_2} < m_1$$
+              </div>
+            </div>
+
+            <p style="color: var(--text-muted); font-size: 0.88rem; margin-top: 0.75rem;">
+              <strong>交叉距離（Crossover Distance）：</strong>當支距超過 $x_{\text{cross}}$ 後，折射波因大部分路徑在高速層滑行，時間上反超直達波，成為最先抵達受波器的信號。
+            </p>
+          </div>
+        </div>
+
+        <!-- Formulas Callout -->
+        <div class="card" style="margin-top: 1.5rem; background: var(--bg-card);">
+          <h3 style="font-size: 1.15rem; font-weight: 700; margin-bottom: 1rem; color: var(--accent-cyan);">
+            📐 截距時間法（Intercept-Time Method）兩層模型反演核心公式
+          </h3>
+          <div class="grid-2">
+            <div>
+              <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 0.5rem;">
+                <strong>界面深度（上層厚度 $h$）計算公式：</strong>
+              </p>
+              <div style="background: var(--bg-secondary); padding: 0.8rem; border-radius: var(--radius-md); text-align: center;">
+                $$h = \frac{t_i \cdot V_1 \cdot V_2}{2 \sqrt{V_2^2 - V_1^2}}$$
+              </div>
+              <p style="color: var(--text-muted); font-size: 0.82rem; margin-top: 0.4rem;">
+                其中 $t_i$ 為折射波走時直線在縱軸（$x=0$）之截距時間。
+              </p>
+            </div>
+            <div>
+              <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 0.5rem;">
+                <strong>理論交叉距離（$x_{\text{cross}}$）公式：</strong>
+              </p>
+              <div style="background: var(--bg-secondary); padding: 0.8rem; border-radius: var(--radius-md); text-align: center;">
+                $$x_{\text{cross}} = 2h \sqrt{\frac{V_2 + V_1}{V_2 - V_1}}$$
+              </div>
+              <p style="color: var(--text-muted); font-size: 0.82rem; margin-top: 0.4rem;">
+                以本測線參數代入（$V_1 \approx 280\text{ m/s}, V_2 \approx 550\text{ m/s}, h \approx 2.54\text{ m}$），$x_{\text{cross}} \approx 8.8\text{ m}$。
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 3: 第4炮走時曲線圖與實測分析 -->
+    <section id="travel-time" class="section">
+      <div class="container">
+        <div class="section-header">
+          <div class="section-kicker">PART 3: Shot 104 Travel-Time Analysis</div>
+          <h2 class="section-title">第 4 炮（104 炮點）互動式走時曲線圖（t–x Diagram）</h2>
+          <p class="section-desc">
+            圖表展示第 4 炮（震源位於 12.0 m 處）24 道受波器實測初達時間。可自選檢視右翼支距（0~34m）或全測線雙翼，點選圖例可切換直達波擬合、折射層視速度與雷利表面波干擾線。
+          </p>
+        </div>
+
+        <!-- Interactive Chart Card -->
+        <div class="chart-container-box">
+          <div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+            <div>
+              <h3 style="font-size: 1.15rem; font-weight: 700;">第 4 炮 走時實測點位與理論趨勢比較圖</h3>
+              <p style="font-size: 0.85rem; color: var(--text-secondary);">橫軸：支距 Offset (m) ｜ 縱軸：初達時間 t (ms)</p>
+            </div>
+            <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+              <button id="viewRightWingBtn" class="btn btn-secondary btn-sm btn-active" onclick="switchViewMode('right')">僅看右翼（17道，0~34m）</button>
+              <button id="viewAllTracesBtn" class="btn btn-secondary btn-sm" onclick="switchViewMode('all')">全測線雙翼（24道，-12~+34m）</button>
+              <button id="resetZoomBtn" class="btn btn-secondary btn-sm" onclick="resetChartZoom()">重設圖表</button>
+            </div>
+          </div>
+
+          <div class="chart-wrapper">
+            <canvas id="travelTimeChart"></canvas>
+          </div>
+
+          <!-- Chart legend / explanations -->
+          <div class="chart-legend-custom">
+            <div class="legend-item">
+              <span class="legend-indicator" style="background: #10b981;"></span>
+              <span><strong>可靠 P 波初達：</strong>CH10～CH13（視速度 ≈ 612 m/s，折射波過渡區）</span>
+            </div>
+            <div class="legend-item">
+              <span class="legend-indicator" style="background: #38bdf8;"></span>
+              <span><strong>近支距 P 波點：</strong>CH1～CH4, CH9（受表面波輕度干擾）</span>
+            </div>
+            <div class="legend-item">
+              <span class="legend-indicator" style="background: #a855f7;"></span>
+              <span><strong>遠支距雷利表面波：</strong>CH14～CH24（速度僅 ~106 m/s，非 P 波初達！）</span>
+            </div>
+            <div class="legend-item">
+              <span class="legend-indicator" style="background: #f43f5e;"></span>
+              <span><strong>近炮飽和道：</strong>CH5～CH8（近炮能量過大削頂，無法讀取）</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Travel Time Analysis Details -->
+        <div class="grid-2" style="margin-top: 1.5rem;">
+          <div class="card">
+            <h3 class="card-title">
+              <span class="card-icon">🔍</span>
+              近支距線性擬合與視速度（CH10～CH13）
+            </h3>
+            <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 0.75rem;">
+              選取訊噪比最高、波形最純淨的 4 個測點進行最小平方直線回歸：
+            </p>
+            <ul style="color: var(--text-muted); font-size: 0.88rem; padding-left: 1.25rem; line-height: 1.7;">
+              <li>測點 $(x, t)$：(6m, 25.5ms)、(8m, 28.5ms)、(10m, 31.8ms)、(12m, 35.3ms)</li>
+              <li>擬合斜率 $m = \Delta t / \Delta x = 1.635\text{ ms/m} = 0.001635\text{ s/m}$</li>
+              <li>視速度 $V = 1 / m = 611.6\text{ m/s} \approx 612\text{ m/s}$</li>
+              <li>截距時間 $t_i = 30.275 - 1.635 \times 9 = 15.56\text{ ms}$</li>
+            </ul>
+            <div class="callout callout-warning" style="margin-top: 0.75rem;">
+              <div class="callout-title">⚠️ 科學批判：為什麼 612 m/s 不是純 V1？</div>
+              <p>
+                此段斜率換算之 612 m/s 略偏高。考量近距離仍有表面波疊加，且僅 4 點，此值代表折射波初動過渡區之「近支距視速度」。合理上層直達波速度 $V_1$ 應落在 200 ～ 320 m/s 之間。
+              </p>
+            </div>
+          </div>
+
+          <div class="card">
+            <h3 class="card-title">
+              <span class="card-icon">🌊</span>
+              遠支距首波陷阱：雷利表面波（106 m/s）
+            </h3>
+            <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 0.75rem;">
+              支距 14 m 以後各道（CH14～CH24）所測得之初達時間隨距離急遽延遲（58 ms 陡增至 247 ms）：
+            </p>
+            <div style="background: var(--bg-secondary); padding: 0.75rem; border-radius: var(--radius-md); text-align: center; margin: 0.5rem 0;">
+              $$V_{\text{app}} = \frac{34\text{ m} - 14\text{ m}}{247.3\text{ ms} - 58\text{ ms}} = \frac{20\text{ m}}{0.1893\text{ s}} \approx 105.7\text{ m/s}$$
+            </div>
+            <div class="callout callout-danger" style="margin-top: 0.75rem;">
+              <div class="callout-title">🛑 關鍵研判：不可將其視為 P 波！</div>
+              <p>
+                106 m/s 的極慢波速屬於地表傳播的<strong>雷利波（Rayleigh Ground Roll）</strong>，而非深部折射波。在遠距離處，真正的 P 波初達能量隨幾何擴散嚴重衰減，已被環境背景噪訊掩蓋。因此本炮的 $V_2$ 需結合全測線多炮聯合反演（SEG-Y 基準 $V_2 \approx 550\text{ m/s}$）。
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 4: 互動式兩層地下波傳模擬器 -->
+    <section id="simulator" class="section" style="background: var(--bg-secondary);">
+      <div class="container">
+        <div class="section-header">
+          <div class="section-kicker">PART 4: Interactive Wave Propagation Simulator</div>
+          <h2 class="section-title">互動式兩層地下波傳與速度結構實驗室</h2>
+          <p class="section-desc">
+            即時調整上層速度 $V_1$、下層速度 $V_2$ 與截距時間 $t_i$，即時動態模擬直達波與臨界折射頭波的射線路徑、臨界角 $\theta_c$、界面深度 $h$ 及交叉距離 $x_{\text{cross}}$！
+          </p>
+        </div>
+
+        <div class="sim-wrapper">
+          <div class="sim-toolbar">
+            <div style="display: flex; align-items: center; gap: 0.75rem;">
+              <button id="toggleAnimBtn" class="btn btn-primary btn-sm" onclick="toggleSimAnimation()">
+                <span id="animIcon">⏸ 暫停動畫</span>
+              </button>
+              <button class="btn btn-secondary btn-sm" onclick="resetSimParams()">還原最佳預設值</button>
+            </div>
+            <div style="font-size: 0.85rem; color: var(--text-secondary);">
+              <span>測線長度：46m ｜ 震源位置：12m（Shot 104） ｜ 24 支受波器陣列</span>
+            </div>
+          </div>
+
+          <!-- HTML5 Canvas for Subsurface Rays -->
+          <div class="canvas-container">
+            <canvas id="rayCanvas"></canvas>
+          </div>
+
+          <!-- Real-time Stats Display -->
+          <div class="sim-stats">
+            <div class="stat-pill">
+              <div class="stat-pill-label">界面深度 (厚度 h)</div>
+              <div class="stat-pill-val" id="statDepth">2.54 m</div>
+            </div>
+            <div class="stat-pill">
+              <div class="stat-pill-label">臨界角 (θc)</div>
+              <div class="stat-pill-val" id="statCritAngle">30.6°</div>
+            </div>
+            <div class="stat-pill">
+              <div class="stat-pill-label">交叉距離 (X cross)</div>
+              <div class="stat-pill-val" id="statXcross">8.8 m</div>
+            </div>
+            <div class="stat-pill">
+              <div class="stat-pill-label">直達波斜率</div>
+              <div class="stat-pill-val" id="statSlope1">3.57 ms/m</div>
+            </div>
+            <div class="stat-pill">
+              <div class="stat-pill-label">折射波斜率</div>
+              <div class="stat-pill-val" id="statSlope2">1.82 ms/m</div>
+            </div>
+          </div>
+
+          <!-- Sliders -->
+          <div class="sim-controls">
+            <div class="control-group">
+              <div class="control-label">
+                <span>表層速度 $V_1$ (直達波)</span>
+                <span class="control-val" id="v1Display">280 m/s</span>
+              </div>
+              <input type="range" id="v1Slider" min="180" max="380" step="10" value="280" oninput="updateSimFromSliders()">
+              <span style="font-size: 0.75rem; color: var(--text-muted);">建議範圍：200 ～ 320 m/s（地表疏鬆土壤）</span>
+            </div>
+
+            <div class="control-group">
+              <div class="control-label">
+                <span>深部速度 $V_2$ (折射層)</span>
+                <span class="control-val" id="v2Display">550 m/s</span>
+              </div>
+              <input type="range" id="v2Slider" min="450" max="750" step="10" value="550" oninput="updateSimFromSliders()">
+              <span style="font-size: 0.75rem; color: var(--text-muted);">建議範圍：530 ～ 580 m/s（壓密土或基岩）</span>
+            </div>
+
+            <div class="control-group">
+              <div class="control-label">
+                <span>折射截距時間 $t_i$</span>
+                <span class="control-val" id="tiDisplay">15.56 ms</span>
+              </div>
+              <input type="range" id="tiSlider" min="10.0" max="25.0" step="0.2" value="15.56" oninput="updateSimFromSliders()">
+              <span style="font-size: 0.75rem; color: var(--text-muted);">實測回歸值：15.56 ms</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Sensitivity Table -->
+        <div class="card" style="margin-top: 1.5rem;">
+          <h3 class="card-title">
+            <span class="card-icon">📊</span>
+            上層速度 $V_1$ 敏感度檢驗分析表（固定 $V_2 = 550\text{ m/s}, t_i = 15.6\text{ ms}$）
+          </h3>
+          <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 1rem;">
+            由於近支距受近炮震動與表面波混雜影響，無法鎖定單一 $V_1$。下表列出 $V_1$ 在合理物理區間變動時對反演深度 $h$ 的影響：
+          </p>
+          <div class="table-container">
+            <table>
+              <thead>
+                <tr>
+                  <th>假設上層速度 $V_1$ (m/s)</th>
+                  <th>$\sqrt{V_2^2 - V_1^2}$ (m/s)</th>
+                  <th>臨界角 $\theta_c$</th>
+                  <th>推算上層厚度 $h$ (m)</th>
+                  <th>理論交叉距離 $x_{\text{cross}}$ (m)</th>
+                  <th>地質評估說明</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>200 m/s</td>
+                  <td>512.0</td>
+                  <td>21.3°</td>
+                  <td>1.68 m</td>
+                  <td>4.93 m</td>
+                  <td>極疏鬆地表未壓密表土</td>
+                </tr>
+                <tr>
+                  <td>220 m/s</td>
+                  <td>504.0</td>
+                  <td>23.6°</td>
+                  <td>1.87 m</td>
+                  <td>5.72 m</td>
+                  <td>含草皮腐植層土壤</td>
+                </tr>
+                <tr>
+                  <td>240 m/s</td>
+                  <td>495.0</td>
+                  <td>25.9°</td>
+                  <td>2.08 m</td>
+                  <td>6.65 m</td>
+                  <td>低密實度回填砂土</td>
+                </tr>
+                <tr>
+                  <td>260 m/s</td>
+                  <td>485.0</td>
+                  <td>28.2°</td>
+                  <td>2.31 m</td>
+                  <td>7.68 m</td>
+                  <td>標準黏土質粉砂</td>
+                </tr>
+                <tr style="background: rgba(56, 189, 248, 0.08); font-weight: 600;">
+                  <td style="color: var(--accent-cyan);">280 m/s (最佳估計)</td>
+                  <td>473.0</td>
+                  <td>30.6°</td>
+                  <td style="color: var(--accent-cyan);">2.54 m</td>
+                  <td>8.77 m</td>
+                  <td>最符合交叉距離點位之最佳模型</td>
+                </tr>
+                <tr style="background: rgba(56, 189, 248, 0.08); font-weight: 600;">
+                  <td style="color: var(--accent-cyan);">300 m/s (最佳估計)</td>
+                  <td>461.0</td>
+                  <td>33.1°</td>
+                  <td style="color: var(--accent-cyan);">2.79 m</td>
+                  <td>10.04 m</td>
+                  <td>密實土壤（厚度上限 ≈ 2.8m）</td>
+                </tr>
+                <tr>
+                  <td>320 m/s</td>
+                  <td>448.0</td>
+                  <td>35.6°</td>
+                  <td>3.07 m</td>
+                  <td>11.49 m</td>
+                  <td>較緊密砂礫石層</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <p style="color: var(--text-muted); font-size: 0.85rem; margin-top: 0.75rem;">
+            📌 <strong>科學結論：</strong>即便 $V_1$ 在 200～320 m/s 間波動，反演出的風化層厚度穩定落在 <strong>1.7 ～ 3.1 公尺</strong>（最佳推薦值約 <strong>2.5 ～ 2.8 公尺</strong>）。
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 5: 訊號品質、振幅衰減與真實資料限制 -->
+    <section id="signal-quality" class="section">
+      <div class="container">
+        <div class="section-header">
+          <div class="section-kicker">PART 5: Signal Quality & Physical Limitations</div>
+          <h2 class="section-title">訊號品質定量分析與真實資料限制</h2>
+          <p class="section-desc">
+            真實世界中的地球物理觀測充滿了儀器滿刻度飽和、背景環境雜訊、幾何擴散衰減以及波形重疊挑戰。
+          </p>
+        </div>
+
+        <div class="grid-2">
+          <!-- Chart 2: Signal Amplitude Decay -->
+          <div class="chart-container-box" style="margin-top: 0;">
+            <h3 style="font-size: 1.15rem; font-weight: 700; margin-bottom: 0.25rem;">各道峰值振幅與雜訊 RMS 分布</h3>
+            <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 1rem;">
+              展示自炮點（CH7, 12m）向兩側衰減的強烈幾何擴散效應（衰減達 28 倍 / 29 dB）
+            </p>
+            <div class="chart-wrapper" style="height: 340px;">
+              <canvas id="amplitudeChart"></canvas>
+            </div>
+          </div>
+
+          <!-- Explanation Cards of Limitations -->
+          <div style="display: flex; flex-direction: column; gap: 1rem;">
+            <div class="card" style="border-left: 4px solid var(--accent-rose);">
+              <h4 style="color: var(--accent-rose); font-weight: 700; margin-bottom: 0.4rem; display: flex; align-items: center; gap: 0.5rem;">
+                <span>⚠️</span> 1. 近炮道滿刻度飽和（Near-Offset Clipping）
+              </h4>
+              <p style="color: var(--text-secondary); font-size: 0.88rem;">
+                CH6、CH7、CH8 距離敲擊點僅 0～2 公尺，地表劇烈受力導致類比訊號超過儀器滿刻度（ADC 飽和削頂，峰值達 8.0×10⁶ count），初達波峰波谷扭曲無法精確判讀。
+              </p>
+            </div>
+
+            <div class="card" style="border-left: 4px solid var(--accent-amber);">
+              <h4 style="color: var(--accent-amber); font-weight: 700; margin-bottom: 0.4rem; display: flex; align-items: center; gap: 0.5rem;">
+                <span>⚠️</span> 2. 震源檔頭註記偏差（Data Provenance）
+              </h4>
+              <p style="color: var(--text-secondary); font-size: 0.88rem;">
+                SEG-2 檔頭標記 <code>SOURCE_LOCATION = 4.00 m</code>，但比對 24 道走時極小值位置及 12 炮幾何交叉驗證，確認真實幾何位置必為 <strong>12.0 m</strong>（儀器軟體手動設定殘留值，不可盲信檔頭）。
+              </p>
+            </div>
+
+            <div class="card" style="border-left: 4px solid var(--accent-cyan);">
+              <h4 style="color: var(--accent-cyan); font-weight: 700; margin-bottom: 0.4rem; display: flex; align-items: center; gap: 0.5rem;">
+                <span>⚠️</span> 3. 自動挑選演算法視窗陷阱 (AIC Pitfall)
+              </h4>
+              <p style="color: var(--text-secondary); font-size: 0.88rem;">
+                AIC（赤池訊息準則）自動挑選若綁定速度搜尋窗，近支距常因邊界截斷產生假速度（如假 300 m/s）；唯有 8～14m 區間初達不受視窗影響，證實必須人工逐道複核與互換驗證。
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Reciprocity Principle Box -->
+        <div class="card" style="margin-top: 1.5rem; background: var(--bg-card);">
+          <h3 class="card-title">
+            <span class="card-icon">🔄</span>
+            互換原理（Reciprocity Principle）與 12 炮點幾何驗證
+          </h3>
+          <p style="color: var(--text-secondary); font-size: 0.92rem; margin-bottom: 1rem;">
+            本實驗在同一 46m 測線上固定 24 支受波器，依序在 0, 4, 8, ..., 44m 敲擊 12 炮（Shot 101 ～ 112）。地下結構是客觀不變的，多震源幾何提供了交叉檢驗的最高黃金標準：
+          </p>
+          <div class="grid-3">
+            <div style="background: var(--bg-secondary); padding: 1.25rem; border-radius: var(--radius-md); border: 1px solid var(--border-color);">
+              <div style="font-size: 0.8rem; color: var(--text-muted); font-weight: 700;">互換定理 (Rayleigh-Betti)</div>
+              <div style="font-size: 1.25rem; font-weight: 800; color: var(--accent-cyan); margin: 0.3rem 0;">$t_{AB} = t_{BA}$</div>
+              <div style="font-size: 0.82rem; color: var(--text-secondary);">震源在 A、受波器在 B 之走時，必嚴格等於震源在 B、受波器在 A 之走時。</div>
+            </div>
+            <div style="background: var(--bg-secondary); padding: 1.25rem; border-radius: var(--radius-md); border: 1px solid var(--border-color);">
+              <div style="font-size: 0.8rem; color: var(--text-muted); font-weight: 700;">實測 35 組互換配對</div>
+              <div style="font-size: 1.25rem; font-weight: 800; color: var(--accent-emerald); margin: 0.3rem 0;">中位差 1.5 ms</div>
+              <div style="font-size: 0.82rem; color: var(--text-secondary);">35 組互換幾何的時間差僅約 1.5 ms，證實時間軸校準與幾何標定高度可靠。</div>
+            </div>
+            <div style="background: var(--bg-secondary); padding: 1.25rem; border-radius: var(--radius-md); border: 1px solid var(--border-color);">
+              <div style="font-size: 0.8rem; color: var(--text-muted); font-weight: 700;">多炮聯合反演優勢</div>
+              <div style="font-size: 1.25rem; font-weight: 800; color: var(--accent-amber); margin: 0.3rem 0;">消除單炮盲區</div>
+              <div style="font-size: 0.82rem; color: var(--text-secondary);">單炮無法獨立確認之 V2，藉由正向與反向多炮疊合即可獲得無偏折射速度。</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 6: CER 科學論證框架 -->
+    <section id="cer-framework" class="section" style="background: var(--bg-secondary);">
+      <div class="container">
+        <div class="section-header text-center">
+          <div class="section-kicker">PART 6: Scientific Argumentation</div>
+          <h2 class="section-title">CER 科學論證框架：我們如何知道地下分層？</h2>
+          <p class="section-desc">
+            依循科學探究與實作規範，將觀測證據透過物理原理轉化為堅實的地下地質模型推論。
+          </p>
+        </div>
+
+        <div class="cer-grid">
+          <!-- Claim -->
+          <div class="cer-card cer-claim">
+            <span class="cer-badge">主張 Claim</span>
+            <h3 style="font-size: 1.2rem; font-weight: 800; margin-bottom: 0.75rem; color: var(--text-primary);">
+              地下介質非單一均勻構造，至少存在兩層速度相異之構造界面
+            </h3>
+            <p style="color: var(--text-secondary); font-size: 0.92rem; line-height: 1.7;">
+              台北市立大學圖書館後方測線地下並非單一均勻土層，而是由<strong>厚度約 2.5 ～ 2.8 公尺之低速表土層（$V_1 \approx 280\text{ m/s}$）</strong>覆蓋於<strong>較深部高速層（$V_2 \approx 550\text{ m/s}$）</strong>之上的兩層構造。
+            </p>
+          </div>
+
+          <!-- Evidence -->
+          <div class="cer-card cer-evidence">
+            <span class="cer-badge">證據 Evidence</span>
+            <h3 style="font-size: 1.2rem; font-weight: 800; margin-bottom: 0.75rem; color: var(--text-primary);">
+              走時曲線明顯折線轉折，單一直線無法合理擬合
+            </h3>
+            <p style="color: var(--text-secondary); font-size: 0.92rem; line-height: 1.7;">
+              1. 實測走時點位若強制用單一直線擬合（平均視速度 470 m/s），RMS 時間殘差高達 <strong>11.1 ms</strong>，呈現系統性偏差。<br>
+              2. 在支距 8～12m 處走時斜率明顯變緩，遠支距折射視速度大幅躍升至 <strong>530 ～ 580 m/s</strong>。
+            </p>
+          </div>
+
+          <!-- Reasoning -->
+          <div class="cer-card cer-reasoning">
+            <span class="cer-badge">推理 Reasoning</span>
+            <h3 style="font-size: 1.2rem; font-weight: 800; margin-bottom: 0.75rem; color: var(--text-primary);">
+              波動力學與司乃耳定律：斜率即速度倒數
+            </h3>
+            <p style="color: var(--text-secondary); font-size: 0.92rem; line-height: 1.7;">
+              走時曲線斜率代表視速度倒數（$1/V$）。斜率隨支距變平緩，證明深部存在高速介質產生臨界折射頭波。高速頭波在交叉距離（約 8.8m）之後超車直達波，形成折線，由此反演求得界面厚度。
+            </p>
+          </div>
+        </div>
+
+        <!-- Application Cards -->
+        <div class="grid-4" style="margin-top: 2rem;">
+          <div class="card" style="padding: 1.25rem;">
+            <div style="font-size: 1.5rem; margin-bottom: 0.5rem;">🏗️</div>
+            <h4 style="font-size: 1rem; font-weight: 700; margin-bottom: 0.25rem;">工程基樁與基岩探查</h4>
+            <p style="color: var(--text-muted); font-size: 0.82rem;">精確探測開挖前軟弱覆土厚度與承載基岩（Bedrock）之深度。</p>
+          </div>
+          <div class="card" style="padding: 1.25rem;">
+            <div style="font-size: 1.5rem; margin-bottom: 0.5rem;">⛰️</div>
+            <h4 style="font-size: 1rem; font-weight: 700; margin-bottom: 0.25rem;">邊坡穩定與滑移面評估</h4>
+            <p style="color: var(--text-muted); font-size: 0.82rem;">利用速度不連續面判定邊坡風化帶深度與潛在崩塌滑動界面。</p>
+          </div>
+          <div class="card" style="padding: 1.25rem;">
+            <div style="font-size: 1.5rem; margin-bottom: 0.5rem;">💧</div>
+            <h4 style="font-size: 1rem; font-weight: 700; margin-bottom: 0.25rem;">地下水面與飽和帶偵測</h4>
+            <p style="color: var(--text-muted); font-size: 0.82rem;">P 波於未飽和土約 300m/s，進入地下水飽和孔隙介質速度急升至 1500m/s。</p>
+          </div>
+          <div class="card" style="padding: 1.25rem;">
+            <div style="font-size: 1.5rem; margin-bottom: 0.5rem;">🛡️</div>
+            <h4 style="font-size: 1rem; font-weight: 700; margin-bottom: 0.25rem;">地質災害與斷層破碎帶</h4>
+            <p style="color: var(--text-muted); font-size: 0.82rem;">斷層剪裂帶內部岩石孔隙率高、剛性驟降，呈現顯著低速異常帶。</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 7: 原始實測 24 道完整資料庫 -->
+    <section id="data-table" class="section">
+      <div class="container">
+        <div class="section-header">
+          <div class="section-kicker">PART 7: Full Dataset Explorer</div>
+          <h2 class="section-title">第 4 炮（Shot 104）24 道完整實測資料庫</h2>
+          <p class="section-desc">
+            讀取自 SEG-2 原始二進位記錄（104.dat），包含受波器位置、相對支距、人工與自動交互檢驗之初達時間、峰值振幅與雜訊 RMS。
+          </p>
+        </div>
+
+        <div class="card">
+          <div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+            <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+              <button class="btn btn-secondary btn-sm btn-active" onclick="filterDataTable('all', this)">全部 24 道</button>
+              <button class="btn btn-secondary btn-sm" onclick="filterDataTable('reliable', this)">僅顯示高可靠初達</button>
+              <button class="btn btn-secondary btn-sm" onclick="filterDataTable('surface', this)">僅顯示表面波主導道</button>
+              <button class="btn btn-secondary btn-sm" onclick="filterDataTable('saturated', this)">僅顯示近炮飽和道</button>
+            </div>
+            <button class="btn btn-primary btn-sm" onclick="exportDataCSV()">📥 匯出 CSV 檔案</button>
+          </div>
+
+          <div class="table-container">
+            <table id="tracesTable">
+              <thead>
+                <tr>
+                  <th>通道 (CHAN)</th>
+                  <th>受波器位置 (m)</th>
+                  <th>支距 Offset (m)</th>
+                  <th>初達時間 t (ms)</th>
+                  <th>可靠度評估</th>
+                  <th>峰值振幅 (count)</th>
+                  <th>雜訊 RMS (前100樣本)</th>
+                  <th>訊噪比與波形備註</th>
+                </tr>
+              </thead>
+              <tbody id="tableBody">
+                <!-- Injected via JavaScript -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 8: GitHub Pages 部署教學指南 -->
+    <section id="deployment" class="section" style="background: var(--bg-secondary);">
+      <div class="container">
+        <div class="section-header">
+          <div class="section-kicker">PART 8: Deployment Guide</div>
+          <h2 class="section-title">GitHub Pages 零配置一鍵部署指南</h2>
+          <p class="section-desc">
+            本專案採用全單一原生 HTML5 架構，已內嵌所有樣式、資料庫與動態模擬引擎，上傳至 GitHub 即可在 1 分鐘內正式上線發布。
+          </p>
+        </div>
+
+        <div class="grid-3">
+          <div class="card">
+            <div class="card-title">
+              <span class="card-icon">1</span>
+              建立儲存庫 (Repository)
+            </div>
+            <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 0.75rem;">
+              登入 GitHub，點擊 <strong>New Repository</strong>：
+            </p>
+            <ul style="color: var(--text-muted); font-size: 0.85rem; padding-left: 1.25rem; line-height: 1.6;">
+              <li>名稱例如：<code>seismic-refraction-inquiry</code></li>
+              <li>設定為 <strong>Public</strong>（公開）</li>
+              <li>勾選「Add a README file」</li>
+            </ul>
+          </div>
+
+          <div class="card">
+            <div class="card-title">
+              <span class="card-icon">2</span>
+              上傳 <code>index.html</code>
+            </div>
+            <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 0.75rem;">
+              將本目錄中的 <code>index.html</code> 檔案上傳至專案根目錄：
+            </p>
+            <ul style="color: var(--text-muted); font-size: 0.85rem; padding-left: 1.25rem; line-height: 1.6;">
+              <li>使用網頁端 <strong>Upload files</strong> 直接拖曳上傳</li>
+              <li>或透過 Git 指令：<br>
+                <code>git add index.html && git commit -m "feat: seismic web" && git push</code>
+              </li>
+            </ul>
+          </div>
+
+          <div class="card">
+            <div class="card-title">
+              <span class="card-icon">3</span>
+              啟用 GitHub Pages
+            </div>
+            <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 0.75rem;">
+              進入儲存庫頁面頂部的 <strong>Settings</strong>：
+            </p>
+            <ul style="color: var(--text-muted); font-size: 0.85rem; padding-left: 1.25rem; line-height: 1.6;">
+              <li>左側選單點選 <strong>Pages</strong></li>
+              <li>Source 選擇 <strong>Deploy from a branch</strong></li>
+              <li>Branch 選擇 <code>main</code> / <code>root</code>，點選 <strong>Save</strong></li>
+              <li>約 60 秒後即可取得上線網址！</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="callout" style="margin-top: 1.5rem;">
+          <div class="callout-title">🌐 上線網址格式</div>
+          <p>
+            部署完成後，全球訪客即可透過 <code>https://&lt;你的GitHub帳號&gt;.github.io/&lt;專案名稱&gt;/</code> 即時瀏覽互動網站，完美適應電腦、平板與手機瀏覽。
+          </p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer>
+    <div class="container">
+      <div class="footer-grid">
+        <div>
+          <div class="footer-brand">看不見的地下，我們怎麼知道？</div>
+          <p class="footer-desc">
+            校園折射震測科學建模與實測分析互動平台 ‧ 台北市立大學地球物理通論課程（202610_UTELS）。<br>
+            原始資料來源：202610_UTELS.pdf（第4炮，104.dat）。
+          </p>
+        </div>
+        <div>
+          <div class="footer-title">快速導覽</div>
+          <ul class="footer-links">
+            <li><a href="#equipment">儀器設備系統</a></li>
+            <li><a href="#principles">波動物理原理</a></li>
+            <li><a href="#travel-time">走時曲線圖分析</a></li>
+            <li><a href="#simulator">兩層波傳模擬器</a></li>
+          </ul>
+        </div>
+        <div>
+          <div class="footer-title">科學資源</div>
+          <ul class="footer-links">
+            <li><a href="#signal-quality">訊噪比與飽和限制</a></li>
+            <li><a href="#cer-framework">CER 論證框架</a></li>
+            <li><a href="#data-table">24 道原始資料表</a></li>
+            <li><a href="#deployment">GitHub Pages 部屬</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        &copy; 2026 台北市立大學 地球物理通論課程 ‧ 遵循開放地球物理探究與實作教育授權
+      </div>
+    </div>
+  </footer>
+
+  <!-- Script Section -->
+  <script>
+    /* =========================================================================
+       1. DATA DEFINITIONS (Extracted from refraction_shot4_分析報告.txt & ===================================.txt)
+       ========================================================================= */
+    const SHOT_X = 12.0; // Shot location in meters
+    const TRACE_DATA = [
+      { chan: 1, pos: 0, offset: 12, t: 37.0, t_str: "約 34~40", rel: "med", peak: 3142120, noise: 37331, note: "中（噪）" },
+      { chan: 2, pos: 2, offset: 10, t: 27.5, t_str: "約 25~30", rel: "med", peak: 3000826, noise: 385770, note: "中" },
+      { chan: 3, pos: 4, offset: 8,  t: 25.0, t_str: "約 22~28", rel: "med", peak: 4165825, noise: 181088, note: "中" },
+      { chan: 4, pos: 6, offset: 6,  t: 21.5, t_str: "約 19~24", rel: "med", peak: 6375415, noise: 270148, note: "中" },
+      { chan: 5, pos: 8, offset: 4,  t: 17.5, t_str: "約 15~20", rel: "low", peak: 5621728, noise: 1169733, note: "低（表面波干擾）" },
+      { chan: 6, pos: 10, offset: 2, t: null, t_str: "----",     rel: "bad", peak: 7748890, noise: 3668923, note: "飽和，不可用" },
+      { chan: 7, pos: 12, offset: 0, t: null, t_str: "----",     rel: "bad", peak: 7995420, noise: 6123201, note: "震源點，滿刻度飽和" },
+      { chan: 8, pos: 14, offset: 2, t: null, t_str: "----",     rel: "bad", peak: 7812908, noise: 3625166, note: "飽和，不可用" },
+      { chan: 9, pos: 16, offset: 4, t: 28.5, t_str: "約 25~32", rel: "low", peak: 6536002, noise: 968006, note: "低（表面波干擾）" },
+      { chan: 10, pos: 18, offset: 6, t: 25.5, t_str: "25.5",   rel: "high", peak: 5065685, noise: 233588, note: "中高（可靠線性段）" },
+      { chan: 11, pos: 20, offset: 8, t: 28.5, t_str: "28.5",   rel: "high", peak: 2855452, noise: 54839,  note: "中高（可靠線性段）" },
+      { chan: 12, pos: 22, offset: 10, t: 31.8, t_str: "31.8",  rel: "high", peak: 2031845, noise: 41186,  note: "高（可靠線性段）" },
+      { chan: 13, pos: 24, offset: 12, t: 35.3, t_str: "35.3",  rel: "high", peak: 906437,  noise: 25845,  note: "高（可靠線性段）" },
+      { chan: 14, pos: 26, offset: 14, t: 58.0, t_str: "58.0",  rel: "surface", peak: 907581, noise: 26059, note: "雷利波過渡區" },
+      { chan: 15, pos: 28, offset: 16, t: 116.0, t_str: "116.0", rel: "surface", peak: 765971, noise: 24803, note: "雷利表面波（慢速）" },
+      { chan: 16, pos: 30, offset: 18, t: 128.5, t_str: "128.5", rel: "surface", peak: 744295, noise: 33753, note: "雷利表面波（慢速）" },
+      { chan: 17, pos: 32, offset: 20, t: 154.8, t_str: "154.8", rel: "surface", peak: 524761, noise: 44433, note: "雷利表面波（慢速）" },
+      { chan: 18, pos: 34, offset: 22, t: 166.5, t_str: "166.5", rel: "surface", peak: 265885, noise: 36799, note: "雷利表面波（慢速）" },
+      { chan: 19, pos: 36, offset: 24, t: 177.3, t_str: "177.3", rel: "surface", peak: 196374, noise: 27641, note: "雷利表面波（慢速）" },
+      { chan: 20, pos: 38, offset: 26, t: 226.3, t_str: "226.3", rel: "surface", peak: 349156, noise: 36541, note: "雷利表面波（慢速）" },
+      { chan: 21, pos: 40, offset: 28, t: null,  t_str: "噪不可用", rel: "bad", peak: 328955, noise: 144167, note: "訊噪比不足" },
+      { chan: 22, pos: 42, offset: 30, t: 190.5, t_str: "190.5", rel: "surface", peak: 306236, noise: 13135, note: "雷利表面波（慢速）" },
+      { chan: 23, pos: 44, offset: 32, t: 95.3,  t_str: "95.3",  rel: "low",     peak: 354679, noise: 10967, note: "低（噪，疑為散射）" },
+      { chan: 24, pos: 46, offset: 34, t: 247.3, t_str: "247.3", rel: "surface", peak: 283662, noise: 33710, note: "雷利表面波（慢速）" }
+    ];
+
+    /* =========================================================================
+       2. TABLE RENDERING & FILTERING
+       ========================================================================= */
+    function renderTable(filter = 'all') {
+      const tbody = document.getElementById('tableBody');
+      tbody.innerHTML = '';
+
+      TRACE_DATA.forEach(row => {
+        if (filter === 'reliable' && row.rel !== 'high') return;
+        if (filter === 'surface' && row.rel !== 'surface') return;
+        if (filter === 'saturated' && row.rel !== 'bad') return;
+
+        let statusClass = 'status-med';
+        let statusText = '中等可靠';
+        if (row.rel === 'high') { statusClass = 'status-high'; statusText = '高可靠 P波'; }
+        else if (row.rel === 'surface') { statusClass = 'status-low'; statusText = '雷利表面波'; }
+        else if (row.rel === 'bad') { statusClass = 'status-bad'; statusText = '飽和/雜訊'; }
+        else if (row.rel === 'low') { statusClass = 'status-low'; statusText = '低（干擾）'; }
+
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td><strong>CH${row.chan}</strong></td>
+          <td>${row.pos} m</td>
+          <td>${row.offset} m ${row.pos < SHOT_X ? '(左翼)' : (row.pos === SHOT_X ? '(炮點)' : '(右翼)')}</td>
+          <td><strong>${row.t_str}</strong> ${row.t ? 'ms' : ''}</td>
+          <td><span class="status-badge ${statusClass}">${statusText}</span></td>
+          <td class="font-mono">${row.peak.toLocaleString()}</td>
+          <td class="font-mono">${row.noise.toLocaleString()}</td>
+          <td>${row.note}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function filterDataTable(type, btn) {
+      document.querySelectorAll('#data-table .btn').forEach(b => b.classList.remove('btn-active'));
+      if (btn) btn.classList.add('btn-active');
+      renderTable(type);
+    }
+
+    function exportDataCSV() {
+      let csv = "Channel,Receiver_Position_m,Offset_m,Arrival_Time_ms,Peak_Amplitude_count,Noise_RMS,Notes\n";
+      TRACE_DATA.forEach(r => {
+        csv += `${r.chan},${r.pos},${r.offset},"${r.t_str}",${r.peak},${r.noise},"${r.note}"\n`;
+      });
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.setAttribute('href', url);
+      link.setAttribute('download', 'Shot104_Refraction_Data_UTELS.csv');
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+
+    /* =========================================================================
+       3. CHART.JS: TRAVEL TIME CURVE
+       ========================================================================= */
+    let travelChart = null;
+    let currentViewMode = 'right'; // 'right' or 'all'
+
+    function initTravelTimeChart() {
+      const ctx = document.getElementById('travelTimeChart').getContext('2d');
+
+      // Separate data points by category for right wing (default)
+      const datasets = getChartDatasets(currentViewMode);
+
+      travelChart = new Chart(ctx, {
+        type: 'scatter',
+        data: { datasets: datasets },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          animation: { duration: 600 },
+          plugins: {
+            tooltip: {
+              backgroundColor: 'rgba(15, 23, 42, 0.95)',
+              titleColor: '#38bdf8',
+              bodyColor: '#f8fafc',
+              borderColor: '#334155',
+              borderWidth: 1,
+              padding: 12,
+              callbacks: {
+                title: function(items) {
+                  const item = items[0];
+                  return `${item.dataset.label}: 支距 ${item.parsed.x} m`;
+                },
+                label: function(item) {
+                  return `初達時間: ${item.parsed.y} ms`;
+                }
+              }
+            },
+            legend: {
+              labels: {
+                color: '#94a3b8',
+                font: { family: "'Inter', sans-serif", size: 12 }
+              }
+            }
+          },
+          scales: {
+            x: {
+              title: {
+                display: true,
+                text: currentViewMode === 'right' ? '支距 Offset (m)' : '測線位置 / 支距 (m)',
+                color: '#94a3b8',
+                font: { weight: 'bold' }
+              },
+              grid: { color: 'rgba(51, 65, 85, 0.4)' },
+              ticks: { color: '#94a3b8' }
+            },
+            y: {
+              title: {
+                display: true,
+                text: '初達時間 Travel Time (ms)',
+                color: '#94a3b8',
+                font: { weight: 'bold' }
+              },
+              grid: { color: 'rgba(51, 65, 85, 0.4)' },
+              ticks: { color: '#94a3b8' },
+              min: 0,
+              max: 270
+            }
+          }
+        }
+      });
+    }
+
+    function getChartDatasets(mode) {
+      const pReliable = [];
+      const pNear = [];
+      const rayleigh = [];
+      const saturated = [];
+
+      TRACE_DATA.forEach(r => {
+        const xVal = (mode === 'right') ? (r.pos >= SHOT_X ? r.offset : null) : (r.pos - SHOT_X);
+        if (xVal === null) return;
+
+        if (r.rel === 'bad') {
+          saturated.push({ x: xVal, y: 0 }); // Saturated displayed on axis
+        } else if (r.rel === 'high') {
+          pReliable.push({ x: xVal, y: r.t });
+        } else if (r.rel === 'surface') {
+          rayleigh.push({ x: xVal, y: r.t });
+        } else {
+          pNear.push({ x: xVal, y: r.t });
+        }
+      });
+
+      // Theoretical lines for right wing (0 to 35m)
+      const lineDirect = [];
+      const lineRefract = [];
+      const lineRayleigh = [];
+
+      for (let x = 0; x <= 36; x += 2) {
+        // Direct wave (V1 = 280 m/s) -> t = x / 0.280 ms
+        lineDirect.push({ x: x, y: x / 0.280 });
+        // Refracted wave (V2 = 550 m/s, ti = 15.56 ms) -> t = x / 0.550 + 15.56 ms
+        lineRefract.push({ x: x, y: (x / 0.550) + 15.56 });
+        // Rayleigh wave (V = 106 m/s) -> starting from x = 14m
+        if (x >= 14) {
+          lineRayleigh.push({ x: x, y: 58 + (x - 14) / 0.106 });
+        }
+      }
+
+      return [
+        {
+          label: '可靠 P 波初達 (CH10~CH13)',
+          data: pReliable,
+          backgroundColor: '#10b981',
+          borderColor: '#10b981',
+          pointRadius: 6,
+          pointHoverRadius: 8
+        },
+        {
+          label: '近距/微噪 P 波初達',
+          data: pNear,
+          backgroundColor: '#38bdf8',
+          borderColor: '#38bdf8',
+          pointRadius: 5,
+          pointHoverRadius: 7
+        },
+        {
+          label: '雷利表面波 (Ground Roll, ~106 m/s)',
+          data: rayleigh,
+          backgroundColor: '#a855f7',
+          borderColor: '#a855f7',
+          pointRadius: 6,
+          pointHoverRadius: 8
+        },
+        {
+          label: '近炮飽和道 (CH5~CH8)',
+          data: saturated,
+          backgroundColor: '#f43f5e',
+          borderColor: '#f43f5e',
+          pointRadius: 5,
+          pointStyle: 'crossRot'
+        },
+        {
+          label: '理論直達波趨勢 (V1 = 280 m/s)',
+          data: lineDirect,
+          type: 'line',
+          borderColor: 'rgba(56, 189, 248, 0.7)',
+          borderDash: [5, 5],
+          pointRadius: 0,
+          fill: false
+        },
+        {
+          label: '理論折射波趨勢 (V2 = 550 m/s, ti = 15.6ms)',
+          data: lineRefract,
+          type: 'line',
+          borderColor: 'rgba(245, 158, 11, 0.85)',
+          borderWidth: 2,
+          pointRadius: 0,
+          fill: false
+        },
+        {
+          label: '表面波擬合線 (~106 m/s)',
+          data: lineRayleigh,
+          type: 'line',
+          borderColor: 'rgba(168, 85, 247, 0.7)',
+          borderDash: [3, 3],
+          pointRadius: 0,
+          fill: false
+        }
+      ];
+    }
+
+    function switchViewMode(mode) {
+      currentViewMode = mode;
+      document.getElementById('viewRightWingBtn').classList.toggle('btn-active', mode === 'right');
+      document.getElementById('viewAllTracesBtn').classList.toggle('btn-active', mode === 'all');
+      
+      travelChart.data.datasets = getChartDatasets(mode);
+      travelChart.options.scales.x.title.text = (mode === 'right') ? '支距 Offset (m)' : '相對於炮點位置 (m, 0 = Shot 104)';
+      travelChart.update();
+    }
+
+    function resetChartZoom() {
+      travelChart.reset();
+    }
+
+    /* =========================================================================
+       4. CHART.JS: SIGNAL AMPLITUDE & NOISE
+       ========================================================================= */
+    function initAmplitudeChart() {
+      const ctx = document.getElementById('amplitudeChart').getContext('2d');
+      const labels = TRACE_DATA.map(d => `CH${d.chan}`);
+      const peaks = TRACE_DATA.map(d => d.peak);
+      const noises = TRACE_DATA.map(d => d.noise);
+
+      new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: labels,
+          datasets: [
+            {
+              label: '峰值振幅 (Peak Count)',
+              data: peaks,
+              backgroundColor: TRACE_DATA.map(d => d.rel === 'bad' ? 'rgba(244, 63, 94, 0.75)' : 'rgba(56, 189, 248, 0.7)'),
+              borderColor: TRACE_DATA.map(d => d.rel === 'bad' ? '#f43f5e' : '#38bdf8'),
+              borderWidth: 1,
+              yAxisID: 'y'
+            },
+            {
+              label: '前100樣本雜訊 RMS',
+              data: noises,
+              type: 'line',
+              borderColor: '#f59e0b',
+              backgroundColor: 'rgba(245, 158, 11, 0.2)',
+              borderWidth: 2,
+              pointRadius: 3,
+              yAxisID: 'y'
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              labels: { color: '#94a3b8', font: { size: 11 } }
+            },
+            tooltip: {
+              callbacks: {
+                label: function(c) {
+                  return `${c.dataset.label}: ${c.raw.toLocaleString()}`;
+                }
+              }
+            }
+          },
+          scales: {
+            x: {
+              grid: { color: 'rgba(51, 65, 85, 0.3)' },
+              ticks: { color: '#94a3b8', font: { size: 10 } }
+            },
+            y: {
+              type: 'logarithmic',
+              title: { display: true, text: '振幅計數 (對數尺度 Log Scale)', color: '#94a3b8' },
+              grid: { color: 'rgba(51, 65, 85, 0.3)' },
+              ticks: { color: '#94a3b8' }
+            }
+          }
+        }
+      });
+    }
+
+    /* =========================================================================
+       5. INTERACTIVE TWO-LAYER SUBSURFACE RAYPATH SIMULATOR (CANVAS)
+       ========================================================================= */
+    const canvas = document.getElementById('rayCanvas');
+    const ctx = canvas.getContext('2d');
+    let simAnimId = null;
+    let simTime = 0;
+    let isSimRunning = true;
+
+    // Simulation parameters
+    let simState = {
+      v1: 280, // m/s
+      v2: 550, // m/s
+      ti: 15.56, // ms
+      h: 2.54, // meters
+      theta_c: 0, // radians
+      x_cross: 8.77 // meters
+    };
+
+    function resizeCanvas() {
+      const rect = canvas.getBoundingClientRect();
+      canvas.width = rect.width * window.devicePixelRatio;
+      canvas.height = 380 * window.devicePixelRatio;
+      ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+    }
+
+    function calculateSimMetrics() {
+      // theta_c = asin(v1 / v2)
+      if (simState.v1 >= simState.v2) {
+        simState.v1 = simState.v2 - 20; // Ensure v1 < v2
+      }
+      const sinTc = simState.v1 / simState.v2;
+      simState.theta_c = Math.asin(sinTc);
+
+      // h = (ti * v1 * v2) / (2 * sqrt(v2^2 - v1^2))
+      const ti_sec = simState.ti / 1000.0;
+      const sqrtTerm = Math.sqrt(simState.v2 * simState.v2 - simState.v1 * simState.v1);
+      simState.h = (ti_sec * simState.v1 * simState.v2) / (2.0 * sqrtTerm);
+
+      // x_cross = 2 * h * sqrt((v2 + v1) / (v2 - v1))
+      simState.x_cross = 2.0 * simState.h * Math.sqrt((simState.v2 + simState.v1) / (simState.v2 - simState.v1));
+
+      // Update DOM Readouts
+      document.getElementById('statDepth').innerText = `${simState.h.toFixed(2)} m`;
+      document.getElementById('statCritAngle').innerText = `${(simState.theta_c * 180 / Math.PI).toFixed(1)}°`;
+      document.getElementById('statXcross').innerText = `${simState.x_cross.toFixed(1)} m`;
+      document.getElementById('statSlope1').innerText = `${(1000.0 / simState.v1).toFixed(2)} ms/m`;
+      document.getElementById('statSlope2').innerText = `${(1000.0 / simState.v2).toFixed(2)} ms/m`;
+
+      document.getElementById('v1Display').innerText = `${Math.round(simState.v1)} m/s`;
+      document.getElementById('v2Display').innerText = `${Math.round(simState.v2)} m/s`;
+      document.getElementById('tiDisplay').innerText = `${simState.ti.toFixed(2)} ms`;
+    }
+
+    function drawSimulation() {
+      const w = canvas.getBoundingClientRect().width;
+      const h_total = 380;
+
+      ctx.clearRect(0, 0, w, h_total);
+
+      // Coordinate mapping:
+      // X: 0m -> 46m across width with margins
+      const padLeft = 45;
+      const padRight = 45;
+      const drawWidth = w - padLeft - padRight;
+      const meterToPx = (m) => padLeft + (m / 46.0) * drawWidth;
+
+      // Y: Surface at y = 80px, max depth ~6m
+      const surfaceY = 80;
+      const maxDepth = 5.5; // meters
+      const depthArea = h_total - surfaceY - 30;
+      const depthToPx = (d) => surfaceY + (d / maxDepth) * depthArea;
+
+      const interfaceY = depthToPx(simState.h);
+
+      // 1. Draw Layer 1 (Weathered Soil)
+      const gradLayer1 = ctx.createLinearGradient(0, surfaceY, 0, interfaceY);
+      gradLayer1.addColorStop(0, '#1c283d');
+      gradLayer1.addColorStop(1, '#1e293b');
+      ctx.fillStyle = gradLayer1;
+      ctx.fillRect(padLeft, surfaceY, drawWidth, interfaceY - surfaceY);
+
+      // 2. Draw Layer 2 (Bedrock / Refraction Layer)
+      const gradLayer2 = ctx.createLinearGradient(0, interfaceY, 0, h_total - 25);
+      gradLayer2.addColorStop(0, '#0f172a');
+      gradLayer2.addColorStop(1, '#080d19');
+      ctx.fillStyle = gradLayer2;
+      ctx.fillRect(padLeft, interfaceY, drawWidth, h_total - 25 - interfaceY);
+
+      // Layer Boundary Line
+      ctx.strokeStyle = '#f59e0b';
+      ctx.lineWidth = 2.5;
+      ctx.setLineDash([6, 4]);
+      ctx.beginPath();
+      ctx.moveTo(padLeft, interfaceY);
+      ctx.lineTo(padLeft + drawWidth, interfaceY);
+      ctx.stroke();
+      ctx.setLineDash([]);
+
+      // Surface ground line
+      ctx.strokeStyle = '#64748b';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(padLeft, surfaceY);
+      ctx.lineTo(padLeft + drawWidth, surfaceY);
+      ctx.stroke();
+
+      // Layer labels
+      ctx.font = '600 13px Inter, sans-serif';
+      ctx.fillStyle = '#94a3b8';
+      ctx.fillText(`表層介質 (疏鬆土壤/風化層) V1 = ${Math.round(simState.v1)} m/s`, padLeft + 15, surfaceY + 25);
+      ctx.fillStyle = '#cbd5e1';
+      ctx.fillText(`深部高速折射層 (基岩/壓密層) V2 = ${Math.round(simState.v2)} m/s`, padLeft + 15, interfaceY + 30);
+
+      // Depth indicator text
+      ctx.font = '500 11px JetBrains Mono, monospace';
+      ctx.fillStyle = '#f59e0b';
+      ctx.fillText(`界面厚度 h = ${simState.h.toFixed(2)} m`, padLeft + drawWidth - 160, interfaceY - 8);
+
+      // 3. Draw 24 Geophones along surface
+      for (let i = 0; i < 24; i++) {
+        const gx = meterToPx(i * 2);
+        // Geophone triangle
+        ctx.fillStyle = '#38bdf8';
+        ctx.beginPath();
+        ctx.moveTo(gx, surfaceY);
+        ctx.lineTo(gx - 4, surfaceY - 10);
+        ctx.lineTo(gx + 4, surfaceY - 10);
+        ctx.closePath();
+        ctx.fill();
+
+        // Channel numbers on top every 4 channels
+        if (i % 2 === 0) {
+          ctx.font = '9px JetBrains Mono, monospace';
+          ctx.fillStyle = '#64748b';
+          ctx.textAlign = 'center';
+          ctx.fillText(`G${i+1}`, gx, surfaceY - 14);
+        }
+      }
+
+      // 4. Draw Shot 104 (at 12.0m)
+      const shotPx = meterToPx(SHOT_X);
+      ctx.fillStyle = '#f43f5e';
+      ctx.beginPath();
+      ctx.arc(shotPx, surfaceY, 7, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Ripple circle animation around shot
+      if (isSimRunning) {
+        const ripple = (simTime * 0.05) % 1.0;
+        ctx.strokeStyle = `rgba(244, 63, 94, ${1.0 - ripple})`;
+        ctx.lineWidth = 1.5;
+        ctx.beginPath();
+        ctx.arc(shotPx, surfaceY, ripple * 30, 0, Math.PI * 2);
+        ctx.stroke();
+      }
+
+      ctx.fillStyle = '#f43f5e';
+      ctx.font = 'bold 11px Inter, sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText(`🔨 炮點 104 (12m)`, shotPx, surfaceY - 26);
+
+      // 5. Draw Direct Wave Rays (along surface to left and right)
+      ctx.strokeStyle = 'rgba(56, 189, 248, 0.6)';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(meterToPx(0), surfaceY);
+      ctx.lineTo(meterToPx(46), surfaceY);
+      ctx.stroke();
+
+      // 6. Draw Refracted Head Waves (Critical Refraction Rays)
+      // critical angle theta_c: leaves shot at angle theta_c to vertical
+      const dX_crit = simState.h * Math.tan(simState.theta_c);
+      const rightCritEntryX = SHOT_X + dX_crit;
+      const leftCritEntryX = SHOT_X - dX_crit;
+
+      // Draw downward ray to right
+      ctx.strokeStyle = '#f59e0b';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(shotPx, surfaceY);
+      ctx.lineTo(meterToPx(rightCritEntryX), interfaceY);
+      // Head wave sliding along interface
+      ctx.lineTo(meterToPx(46), interfaceY);
+      ctx.stroke();
+
+      // Downward ray to left
+      ctx.beginPath();
+      ctx.moveTo(shotPx, surfaceY);
+      ctx.lineTo(meterToPx(leftCritEntryX), interfaceY);
+      ctx.lineTo(meterToPx(0), interfaceY);
+      ctx.stroke();
+
+      // Return rays to receivers (emerging at angle theta_c)
+      // For receivers on right: G_x >= rightCritEntryX + dX_crit
+      const minReturnX = rightCritEntryX + dX_crit;
+      for (let pos = 16; pos <= 46; pos += 4) {
+        if (pos >= minReturnX) {
+          const interfaceEmitX = pos - dX_crit;
+          ctx.strokeStyle = 'rgba(245, 158, 11, 0.45)';
+          ctx.lineWidth = 1.5;
+          ctx.beginPath();
+          ctx.moveTo(meterToPx(interfaceEmitX), interfaceY);
+          ctx.lineTo(meterToPx(pos), surfaceY);
+          ctx.stroke();
+        }
+      }
+
+      // 7. Crossover Distance Marker
+      const xCrossRight = SHOT_X + simState.x_cross;
+      if (xCrossRight <= 46) {
+        const xCrossPx = meterToPx(xCrossRight);
+        ctx.strokeStyle = '#10b981';
+        ctx.lineWidth = 1.5;
+        ctx.setLineDash([4, 4]);
+        ctx.beginPath();
+        ctx.moveTo(xCrossPx, surfaceY - 5);
+        ctx.lineTo(xCrossPx, interfaceY + 20);
+        ctx.stroke();
+        ctx.setLineDash([]);
+
+        ctx.fillStyle = '#10b981';
+        ctx.font = 'bold 10px JetBrains Mono, monospace';
+        ctx.textAlign = 'center';
+        ctx.fillText(`Xcross (${simState.x_cross.toFixed(1)}m)`, xCrossPx, surfaceY - 12);
+      }
+
+      // 8. Traveling wavefront pulse particles
+      if (isSimRunning) {
+        simTime += 1;
+        const progress = (simTime * 0.02) % 1.0;
+        // Direct particle
+        const pDirectX = SHOT_X + progress * 32.0;
+        ctx.fillStyle = '#38bdf8';
+        ctx.beginPath();
+        ctx.arc(meterToPx(pDirectX), surfaceY, 3, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Refracted particle down
+        if (progress < 0.25) {
+          const downT = progress / 0.25;
+          const px = SHOT_X + downT * dX_crit;
+          const py = surfaceY + downT * (interfaceY - surfaceY);
+          ctx.fillStyle = '#f59e0b';
+          ctx.beginPath();
+          ctx.arc(meterToPx(px), py, 3.5, 0, Math.PI * 2);
+          ctx.fill();
+        } else {
+          // Sliding along interface at high speed V2
+          const slideT = (progress - 0.25) / 0.75;
+          const slideX = rightCritEntryX + slideT * (46 - rightCritEntryX);
+          ctx.fillStyle = '#f59e0b';
+          ctx.beginPath();
+          ctx.arc(meterToPx(slideX), interfaceY, 3.5, 0, Math.PI * 2);
+          ctx.fill();
+        }
+      }
+    }
+
+    function simLoop() {
+      drawSimulation();
+      if (isSimRunning) {
+        simAnimId = requestAnimationFrame(simLoop);
+      }
+    }
+
+    function toggleSimAnimation() {
+      isSimRunning = !isSimRunning;
+      const icon = document.getElementById('animIcon');
+      if (isSimRunning) {
+        icon.innerText = '⏸ 暫停動畫';
+        simLoop();
+      } else {
+        icon.innerText = '▶ 播放動畫';
+        cancelAnimationFrame(simAnimId);
+      }
+    }
+
+    function updateSimFromSliders() {
+      simState.v1 = parseFloat(document.getElementById('v1Slider').value);
+      simState.v2 = parseFloat(document.getElementById('v2Slider').value);
+      simState.ti = parseFloat(document.getElementById('tiSlider').value);
+
+      calculateSimMetrics();
+      if (!isSimRunning) drawSimulation();
+    }
+
+    function resetSimParams() {
+      document.getElementById('v1Slider').value = 280;
+      document.getElementById('v2Slider').value = 550;
+      document.getElementById('tiSlider').value = 15.56;
+      updateSimFromSliders();
+    }
+
+    /* =========================================================================
+       6. THEME TOGGLING (DARK / LIGHT)
+       ========================================================================= */
+    const themeToggleBtn = document.getElementById('themeToggle');
+    themeToggleBtn.addEventListener('click', () => {
+      const currentTheme = document.documentElement.getAttribute('data-theme') || 'dark';
+      const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', newTheme);
+      localStorage.setItem('theme', newTheme);
+    });
+
+    // Check stored theme
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme) {
+      document.documentElement.setAttribute('data-theme', savedTheme);
+    }
+
+    /* =========================================================================
+       7. INITIALIZATION ON WINDOW LOAD
+       ========================================================================= */
+    window.addEventListener('DOMContentLoaded', () => {
+      renderTable('all');
+      initTravelTimeChart();
+      initAmplitudeChart();
+
+      resizeCanvas();
+      calculateSimMetrics();
+      simLoop();
+
+      window.addEventListener('resize', () => {
+        resizeCanvas();
+        if (!isSimRunning) drawSimulation();
+      });
+    });
+  </script>
+</body>
+</html>

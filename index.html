@@ -886,6 +886,119 @@
       color: var(--text-muted);
     }
 
+    /* Student Reflection Section */
+    .reflection-quote-card {
+      background: linear-gradient(135deg, rgba(30, 41, 59, 0.9) 0%, rgba(15, 23, 42, 0.98) 100%);
+      border: 1px solid rgba(56, 189, 248, 0.35);
+      border-radius: var(--radius-lg);
+      padding: 2.25rem 2.5rem;
+      box-shadow: 0 12px 30px -5px rgba(0, 0, 0, 0.5), 0 0 25px -5px rgba(56, 189, 248, 0.15);
+      position: relative;
+      margin-bottom: 2rem;
+      backdrop-filter: blur(12px);
+    }
+
+    [data-theme="light"] .reflection-quote-card {
+      background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+      border-color: rgba(2, 132, 199, 0.3);
+      box-shadow: 0 12px 30px -5px rgba(2, 132, 199, 0.12);
+    }
+
+    .reflection-quote-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+
+    .reflection-quote-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: var(--accent-cyan);
+      background: rgba(56, 189, 248, 0.12);
+      border: 1px solid rgba(56, 189, 248, 0.3);
+      padding: 0.3rem 0.75rem;
+      border-radius: var(--radius-full);
+      letter-spacing: 0.03em;
+    }
+
+    .reflection-quote-date {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .reflection-quote-icon {
+      font-size: 3.5rem;
+      line-height: 0.8;
+      color: var(--accent-cyan);
+      opacity: 0.4;
+      font-family: Georgia, serif;
+      margin-bottom: 0.75rem;
+    }
+
+    .reflection-quote-text {
+      font-size: 1.15rem;
+      line-height: 1.85;
+      color: var(--text-primary);
+      font-weight: 500;
+      letter-spacing: 0.01em;
+      margin-bottom: 1.75rem;
+      position: relative;
+      border: none;
+      padding: 0;
+    }
+
+    .reflection-author-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1rem;
+      padding-top: 1.25rem;
+      border-top: 1px solid var(--border-color);
+    }
+
+    .reflection-author-info {
+      display: flex;
+      align-items: center;
+      gap: 0.85rem;
+    }
+
+    .reflection-avatar {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--accent-cyan), var(--accent-indigo));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.3rem;
+      box-shadow: 0 0 15px rgba(56, 189, 248, 0.4);
+      flex-shrink: 0;
+    }
+
+    .reflection-tags {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+
+    .reflection-tag {
+      background: rgba(56, 189, 248, 0.1);
+      color: var(--accent-cyan);
+      border: 1px solid rgba(56, 189, 248, 0.25);
+      font-size: 0.78rem;
+      font-weight: 600;
+      padding: 0.25rem 0.65rem;
+      border-radius: var(--radius-full);
+    }
+
     /* Responsive adjustments */
     @media (max-width: 900px) {
       .hero-title {
@@ -915,6 +1028,7 @@
         <li><a href="#signal-quality" class="nav-link">訊噪與飽和</a></li>
         <li><a href="#cer-framework" class="nav-link">CER論證</a></li>
         <li><a href="#data-table" class="nav-link">原始數據庫</a></li>
+        <li><a href="#student-reflection" class="nav-link">學生心得</a></li>
       </ul>
 
       <div class="nav-actions">
@@ -1642,6 +1756,150 @@
         </div>
       </div>
     </section>
+
+    <!-- Section 8: 學生實作心得與探究反思 -->
+    <section id="student-reflection" class="section" style="background: var(--bg-secondary);">
+      <div class="container">
+        <div class="section-header text-center">
+          <div class="section-kicker">PART 8: Student Reflections & Field Insights</div>
+          <h2 class="section-title">學生實作心得與探究反思</h2>
+          <p class="section-desc">
+            走出課本公式，走進真實野外：從人工敲擊的真實體感，到解構觀測變數與波形疊加的深刻領悟。
+          </p>
+        </div>
+
+        <!-- Hero Quote Box -->
+        <div class="reflection-quote-card">
+          <div class="reflection-quote-header">
+            <span class="reflection-quote-badge">🎓 實作學員筆記 ‧ 心得原話</span>
+            <span class="reflection-quote-date">2026-10-21</span>
+          </div>
+          <div class="reflection-quote-icon">“</div>
+          <blockquote class="reflection-quote-text">
+            這次的學習相較於以前在書本上的知識有趣，有種在把課本上的知識實際操作的感覺，在敲打的過程中也是一個很有趣的體驗，槌子很重，耳朵很痛，但我覺得我收穫很多，在高中的時候有嘗試去做地震相關的資料學習與分析，但是很像無頭蒼蠅一樣胡亂抓資料胡亂研究，這次的實驗讓我對於他的觀測，觀測的變數，其中需要考量的點，震動的疊加，讓我對於地震有更多的了解。
+          </blockquote>
+          <div class="reflection-author-bar">
+            <div class="reflection-author-info">
+              <div class="reflection-avatar">⚒️</div>
+              <div>
+                <div style="font-weight: 700; color: var(--text-primary); font-size: 0.95rem;">地球物理通論 課程學員</div>
+                <div style="font-size: 0.8rem; color: var(--text-muted);">台北市立大學 ‧ 202610_UTELS 校園折射震測實作</div>
+              </div>
+            </div>
+            <div class="reflection-tags">
+              <span class="reflection-tag">#課本知識到實際操作</span>
+              <span class="reflection-tag">#槌子很重耳朵很痛</span>
+              <span class="reflection-tag">#高中摸索到大學探究</span>
+              <span class="reflection-tag">#觀測變數與疊加原理</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 3 In-depth Insights Grid -->
+        <div class="grid-3" style="margin-top: 2rem;">
+          <!-- Insight Card 1 -->
+          <div class="card" style="border-top: 4px solid var(--accent-rose);">
+            <div class="card-title" style="color: var(--accent-rose);">
+              <span class="card-icon" style="background: rgba(244, 63, 94, 0.15); color: var(--accent-rose);">🔨</span>
+              體感物理：槌子很重，耳朵很痛
+            </div>
+            <div style="font-size: 0.85rem; font-weight: 600; color: var(--text-muted); margin-bottom: 0.75rem;">
+              野外震源的感官真實與能量轉換代價
+            </div>
+            <p style="color: var(--text-secondary); font-size: 0.9rem; line-height: 1.65; margin-bottom: 0.75rem;">
+              <strong>重鎚揮擊與動能轉化：</strong>書本上常將震源簡化為理想點震源（Point Source），但在野外必須親手掄起沉重的鐵鎚，每一次敲擊都是重力位能轉化為動能、再經由鋼板剛性耦合注入地下的力學過程。
+            </p>
+            <p style="color: var(--text-secondary); font-size: 0.9rem; line-height: 1.65;">
+              <strong>聲能與彈性波的分流：</strong>「耳朵很痛」正是敲擊金屬底板瞬間，能量劇烈轉化為空氣中聲波（Acoustic Wave）的直接感官證明。這讓人深刻理解到震源釋放的能量並非百分之百進入地層，而是伴隨強烈的聲波散射與機械耗損。
+            </p>
+          </div>
+
+          <!-- Insight Card 2 -->
+          <div class="card" style="border-top: 4px solid var(--accent-cyan);">
+            <div class="card-title" style="color: var(--accent-cyan);">
+              <span class="card-icon" style="background: rgba(56, 189, 248, 0.15); color: var(--accent-cyan);">🧭</span>
+              科學典範轉移：告別「無頭蒼蠅」
+            </div>
+            <div style="font-size: 0.85rem; font-weight: 600; color: var(--text-muted); margin-bottom: 0.75rem;">
+              從盲目抓取資料到建立系統化觀測架構
+            </div>
+            <p style="color: var(--text-secondary); font-size: 0.9rem; line-height: 1.65; margin-bottom: 0.75rem;">
+              <strong>高中的摸索盲點：</strong>高中時嘗試研究地震，往往在網路資料庫下載一大堆未經幾何標定的波形檔，面對無窮無盡的訊號卻「像無頭蒼蠅一樣胡亂研究」，根本不知其然、更不知其所以然。
+            </p>
+            <p style="color: var(--text-secondary); font-size: 0.9rem; line-height: 1.65;">
+              <strong>大學系統觀的確立：</strong>透過拉設 46m 測線皮尺、校正 24 支受波器絕對座標、比對 Trigger $t=0$ 觸發信號，才明白「資料不是抓來就能用，沒有空間幾何與物理邊界條件的數據只是雜訊」。整套觀測系統的搭建讓科學研究有了扎實的地基。
+            </p>
+          </div>
+
+          <!-- Insight Card 3 -->
+          <div class="card" style="border-top: 4px solid var(--accent-amber);">
+            <div class="card-title" style="color: var(--accent-amber);">
+              <span class="card-icon" style="background: rgba(245, 158, 11, 0.15); color: var(--accent-amber);">📈</span>
+              核心物理破壁：觀測變數與疊加原理
+            </div>
+            <div style="font-size: 0.85rem; font-weight: 600; color: var(--text-muted); margin-bottom: 0.75rem;">
+              揭開地下幾何與訊噪比（SNR）增益的本質
+            </div>
+            <p style="color: var(--text-secondary); font-size: 0.9rem; line-height: 1.65; margin-bottom: 0.75rem;">
+              <strong>震動的同相疊加（Stacking）：</strong>野外重複敲擊 15 次，不是無謂的體力消耗，而是利用同相彈性訊號同相疊加（振幅增強 $N$ 倍），而環境隨機雜訊僅以 $\sqrt{N}$ 增長，使訊噪比躍升近 4 倍，讓遠支距微弱的 P 波初達從雜訊中浮現。
+            </p>
+            <p style="color: var(--text-secondary); font-size: 0.9rem; line-height: 1.65;">
+              <strong>不可忽視的觀測變數：</strong>親身體會近炮受波器的類比飽和削頂（CH6~CH8）、遠處雷利表面波（106 m/s）慢速巨浪對微弱 P 波的遮蔽、以及互換原理對走時精度的檢驗，真正掌握了地震觀測的物理全貌。
+            </p>
+          </div>
+        </div>
+
+        <!-- Comparative Exploration Table -->
+        <div class="card" style="margin-top: 2rem;">
+          <h3 class="card-title">
+            <span class="card-icon">📊</span>
+            學習認知躍升矩陣：從「書本/高中摸索」到「野外實測探究」
+          </h3>
+          <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 1.25rem;">
+            學生的真實心得反映出地球物理教育中最核心的「做中學（Learning by Doing）」認知躍遷歷程：
+          </p>
+          <div class="table-container">
+            <table>
+              <thead>
+                <tr>
+                  <th style="width: 18%;">維度 / 核心觀念</th>
+                  <th style="width: 41%;">以前的理解（書本知識 / 高中摸索時期）</th>
+                  <th style="width: 41%;">本次實作後的領悟（系統化科學探究與建模）</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>震源激發與能量</strong></td>
+                  <td>紙上談兵的物理點震源，不知能量如何產生與傳入地下。</td>
+                  <td>親掄重槌敲擊剛性鋼板，深刻體認動能轉化、體力消耗與聲波/彈性波能量分配機制。</td>
+                </tr>
+                <tr>
+                  <td><strong>地震資料分析</strong></td>
+                  <td>像無頭蒼蠅般胡亂下載公開波形，缺乏邊界條件與空間幾何。</td>
+                  <td>精確拉設測線皮尺、校準 24 支受波器空間位置，確立時間與空間座標的嚴格因果。</td>
+                </tr>
+                <tr>
+                  <td><strong>訊號與雜訊處理</strong></td>
+                  <td>以為儀器記錄到的都是純淨訊號，忽視背景雜訊與儀器限制。</td>
+                  <td>深入理解「垂直疊加（Stacking）」提升 SNR 的統計物理意義，識別近道飽和削頂與表面波干擾。</td>
+                </tr>
+                <tr>
+                  <td><strong>地下結構推論</strong></td>
+                  <td>死背司乃耳定律與折射公式，無法想像地下地層如何被「看見」。</td>
+                  <td>透過 $t-x$ 走時曲線折線斜率反演，直觀見證 8.8m 交叉距離超車與 2.5m 風化層深度計算。</td>
+                </tr>
+                <tr>
+                  <td><strong>科學驗證思維</strong></td>
+                  <td>單向接受課本給出的答案，缺乏主動質疑與交叉比對能力。</td>
+                  <td>學習利用 35 組互換原理（Reciprocity）與 CER 論證架構，以嚴謹數據支撐地質推論。</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+      </div>
+    </section>
   </main>
 
   <!-- Footer -->
@@ -1665,11 +1923,12 @@
           </ul>
         </div>
         <div>
-          <div class="footer-title">科學資源</div>
+          <div class="footer-title">科學資源與反思</div>
           <ul class="footer-links">
             <li><a href="#signal-quality">訊噪比與飽和限制</a></li>
             <li><a href="#cer-framework">CER 論證框架</a></li>
             <li><a href="#data-table">24 道原始資料表</a></li>
+            <li><a href="#student-reflection">學生實作心得與反思</a></li>
           </ul>
         </div>
       </div>

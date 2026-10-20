@@ -915,7 +915,6 @@
         <li><a href="#signal-quality" class="nav-link">訊噪與飽和</a></li>
         <li><a href="#cer-framework" class="nav-link">CER論證</a></li>
         <li><a href="#data-table" class="nav-link">原始數據庫</a></li>
-        <li><a href="#deployment" class="nav-link">部署指南</a></li>
       </ul>
 
       <div class="nav-actions">
@@ -1643,75 +1642,6 @@
         </div>
       </div>
     </section>
-
-    <!-- Section 8: GitHub Pages 部署教學指南 -->
-    <section id="deployment" class="section" style="background: var(--bg-secondary);">
-      <div class="container">
-        <div class="section-header">
-          <div class="section-kicker">PART 8: Deployment Guide</div>
-          <h2 class="section-title">GitHub Pages 零配置一鍵部署指南</h2>
-          <p class="section-desc">
-            本專案採用全單一原生 HTML5 架構，已內嵌所有樣式、資料庫與動態模擬引擎，上傳至 GitHub 即可在 1 分鐘內正式上線發布。
-          </p>
-        </div>
-
-        <div class="grid-3">
-          <div class="card">
-            <div class="card-title">
-              <span class="card-icon">1</span>
-              建立儲存庫 (Repository)
-            </div>
-            <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 0.75rem;">
-              登入 GitHub，點擊 <strong>New Repository</strong>：
-            </p>
-            <ul style="color: var(--text-muted); font-size: 0.85rem; padding-left: 1.25rem; line-height: 1.6;">
-              <li>名稱例如：<code>seismic-refraction-inquiry</code></li>
-              <li>設定為 <strong>Public</strong>（公開）</li>
-              <li>勾選「Add a README file」</li>
-            </ul>
-          </div>
-
-          <div class="card">
-            <div class="card-title">
-              <span class="card-icon">2</span>
-              上傳 <code>index.html</code>
-            </div>
-            <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 0.75rem;">
-              將本目錄中的 <code>index.html</code> 檔案上傳至專案根目錄：
-            </p>
-            <ul style="color: var(--text-muted); font-size: 0.85rem; padding-left: 1.25rem; line-height: 1.6;">
-              <li>使用網頁端 <strong>Upload files</strong> 直接拖曳上傳</li>
-              <li>或透過 Git 指令：<br>
-                <code>git add index.html && git commit -m "feat: seismic web" && git push</code>
-              </li>
-            </ul>
-          </div>
-
-          <div class="card">
-            <div class="card-title">
-              <span class="card-icon">3</span>
-              啟用 GitHub Pages
-            </div>
-            <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 0.75rem;">
-              進入儲存庫頁面頂部的 <strong>Settings</strong>：
-            </p>
-            <ul style="color: var(--text-muted); font-size: 0.85rem; padding-left: 1.25rem; line-height: 1.6;">
-              <li>左側選單點選 <strong>Pages</strong></li>
-              <li>Source 選擇 <strong>Deploy from a branch</strong></li>
-              <li>Branch 選擇 <code>main</code> / <code>root</code>，點選 <strong>Save</strong></li>
-              <li>約 60 秒後即可取得上線網址！</li>
-            </ul>
-          </div>
-        </div>
-
-        <div class="callout" style="margin-top: 1.5rem;">
-          <div class="callout-title">🌐 上線網址格式</div>
-          <p>
-            部署完成後，全球訪客即可透過 <code>https://&lt;你的GitHub帳號&gt;.github.io/&lt;專案名稱&gt;/</code> 即時瀏覽互動網站，完美適應電腦、平板與手機瀏覽。
-          </p>
-        </div>
-      </div>
-    </section>
   </main>
 
   <!-- Footer -->
@@ -1740,7 +1670,6 @@
             <li><a href="#signal-quality">訊噪比與飽和限制</a></li>
             <li><a href="#cer-framework">CER 論證框架</a></li>
             <li><a href="#data-table">24 道原始資料表</a></li>
-            <li><a href="#deployment">GitHub Pages 部屬</a></li>
           </ul>
         </div>
       </div>
